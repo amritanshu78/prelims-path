@@ -1,0 +1,2764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0D47A1">
+<title>Prelims Path — UPSC CSE Planner</title>
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUHJlbGltcyBQYXRoIiwic2hvcnRfbmFtZSI6IlByZWxpbXMgUGF0aCIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjRjVGN0ZBIiwidGhlbWVfY29sb3IiOiIjMEQ0N0ExIn0=">
+<style>
+/* ============================================================
+   PRELIMS PATH — UPSC CSE Preparation App
+   Design tokens
+   ============================================================ */
+:root{
+  --primary:#0D47A1;
+  --primary-rgb:13,71,161;
+  --accent:#1976D2;
+  --accent-rgb:25,118,210;
+  --success:#2E7D32;
+  --warning:#F9A825;
+  --danger:#C62828;
+  --bg:#F5F7FA;
+  --card:#FFFFFF;
+  --text:#16202B;
+  --text-dim:#5C6B7A;
+  --text-faint:#8A97A6;
+  --border:rgba(13,71,161,0.10);
+  --shadow:0 1px 2px rgba(16,24,40,0.04), 0 4px 14px rgba(16,24,40,0.06);
+  --shadow-lg:0 8px 28px rgba(16,24,40,0.12);
+  --radius:16px;
+  --radius-sm:10px;
+  --radius-lg:22px;
+  --font-display:'Fraunces','Georgia',serif;
+  --font-body:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+  --fs-scale:1;
+  --nav-h:68px;
+  --top-h:58px;
+  --omr-dot: rgba(13,71,161,0.05);
+}
+[data-theme="dark"]{
+  --bg:#0E1420;
+  --card:#161E2C;
+  --text:#EAF0F8;
+  --text-dim:#9FB0C3;
+  --text-faint:#6C7C8F;
+  --border:rgba(255,255,255,0.08);
+  --shadow:0 1px 2px rgba(0,0,0,0.3), 0 6px 20px rgba(0,0,0,0.35);
+  --shadow-lg:0 10px 32px rgba(0,0,0,0.5);
+  --omr-dot: rgba(255,255,255,0.04);
+}
+*,*::before,*::after{box-sizing:border-box;}
+html{-webkit-tap-highlight-color:transparent;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+  font-size:calc(15px * var(--fs-scale));
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  overscroll-behavior-y:none;
+  transition:background .25s ease,color .25s ease;
+}
+@font-face{
+  font-family:'Fraunces';
+  src:local('Georgia');
+}
+h1,h2,h3,h4{font-family:var(--font-display);margin:0;font-weight:600;letter-spacing:-0.01em;}
+p{margin:0;}
+button{font-family:inherit;}
+::selection{background:rgba(var(--accent-rgb),0.25);}
+a{color:inherit;}
+input,textarea,select{font-family:inherit;font-size:inherit;color:inherit;}
+
+#app{max-width:560px;margin:0 auto;min-height:100vh;position:relative;padding-bottom:calc(var(--nav-h) + 14px);}
+
+/* ---------------- Topbar ---------------- */
+.topbar{
+  position:sticky;top:0;z-index:40;
+  display:flex;align-items:center;gap:10px;
+  height:var(--top-h);padding:0 16px;
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(8px);
+}
+.topbar .brand{display:flex;align-items:center;gap:9px;flex:1;min-width:0;}
+.brand-mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(155deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;}
+.brand-mark::after{content:'';width:8px;height:8px;border-radius:50%;border:1.6px solid #fff;}
+.brand-name{font-family:var(--font-display);font-weight:600;font-size:1.02rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-btn{
+  width:36px;height:36px;border-radius:50%;border:none;background:transparent;
+  display:flex;align-items:center;justify-content:center;color:var(--text-dim);cursor:pointer;flex-shrink:0;
+}
+.topbar-btn:active{background:var(--border);}
+.search-wrap{position:sticky;top:var(--top-h);z-index:39;background:var(--bg);padding:0 16px 10px;display:none;}
+.search-wrap.open{display:block;}
+.search-input{
+  width:100%;padding:11px 14px;border-radius:12px;border:1px solid var(--border);
+  background:var(--card);color:var(--text);outline:none;font-size:0.92rem;
+}
+.search-results{margin-top:8px;display:flex;flex-direction:column;gap:6px;max-height:50vh;overflow:auto;}
+.search-hit{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:0.85rem;cursor:pointer;}
+.search-hit b{color:var(--accent);}
+.search-hit .sh-meta{color:var(--text-faint);font-size:0.72rem;margin-top:2px;}
+
+/* ---------------- Screens ---------------- */
+main#screens{padding:14px 16px 6px;}
+.screen{display:none;animation:fadeUp .32s ease;}
+.screen.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+@media (prefers-reduced-motion: reduce){.screen{animation:none;}*{transition:none !important;animation-duration:.001s !important;}}
+
+.section-title{font-size:1.18rem;margin:22px 0 12px;display:flex;align-items:center;justify-content:space-between;}
+.section-title span.tag{font-family:var(--font-body);font-size:0.68rem;font-weight:700;color:var(--text-faint);letter-spacing:.06em;text-transform:uppercase;}
+.screen-header{padding:6px 0 4px;}
+.screen-header h2{font-size:1.4rem;}
+.screen-header p{color:var(--text-dim);font-size:0.85rem;margin-top:3px;}
+
+/* ---------------- Cards ---------------- */
+.card{
+  background:var(--card);border-radius:var(--radius);padding:16px;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+}
+.card + .card{margin-top:12px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.stat-card{background:var(--card);border-radius:14px;padding:12px 14px;border:1px solid var(--border);box-shadow:var(--shadow);}
+.stat-card .stat-val{font-family:var(--font-display);font-size:1.5rem;font-weight:700;line-height:1.1;}
+.stat-card .stat-label{font-size:0.7rem;color:var(--text-faint);margin-top:3px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;}
+.stat-card .stat-icon{opacity:.55;}
+
+/* ---------------- Hero / countdown ---------------- */
+.hero{
+  position:relative;overflow:hidden;border-radius:var(--radius-lg);
+  background:linear-gradient(160deg,var(--primary) 0%,var(--accent) 100%);
+  color:#fff;padding:22px 20px 20px;box-shadow:var(--shadow-lg);
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(var(--omr-dot-hero,rgba(255,255,255,0.16)) 1.6px, transparent 1.6px);
+  background-size:14px 14px;opacity:.5;pointer-events:none;
+}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;}
+.hero-date{font-size:0.78rem;opacity:.85;font-weight:600;letter-spacing:.02em;}
+.hero-quote{font-size:0.78rem;opacity:.85;margin-top:2px;max-width:220px;font-style:italic;}
+.countdown-ring{position:relative;width:84px;height:84px;flex-shrink:0;}
+.countdown-ring svg{transform:rotate(-90deg);}
+.countdown-ring .cr-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.countdown-ring .cr-num b{font-family:var(--font-display);font-size:1.35rem;line-height:1;}
+.countdown-ring .cr-num small{font-size:0.55rem;opacity:.85;letter-spacing:.03em;}
+.hero-days{font-family:var(--font-display);font-size:2.6rem;font-weight:700;margin-top:8px;line-height:1;position:relative;z-index:1;}
+.hero-days span{font-size:1rem;font-family:var(--font-body);font-weight:600;opacity:.85;}
+.hero-progress{margin-top:14px;position:relative;z-index:1;}
+.hero-progress-bar{height:8px;border-radius:6px;background:rgba(255,255,255,0.25);overflow:hidden;}
+.hero-progress-bar>div{height:100%;background:#fff;border-radius:6px;transition:width .5s ease;}
+.hero-progress-label{display:flex;justify-content:space-between;font-size:0.72rem;margin-top:6px;opacity:.9;}
+
+/* ---------------- Progress bars ---------------- */
+.pbar{height:8px;border-radius:6px;background:var(--border);overflow:hidden;}
+.pbar>div{height:100%;border-radius:6px;background:var(--accent);transition:width .4s ease;}
+.pbar.thin{height:5px;}
+
+/* ---------------- Buttons ---------------- */
+.btn{
+  border:none;border-radius:12px;padding:11px 16px;font-weight:700;font-size:0.86rem;
+  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-accent{background:var(--accent);color:#fff;}
+.btn-success{background:var(--success);color:#fff;}
+.btn-ghost{background:var(--border);color:var(--text);}
+.btn-outline{background:transparent;border:1.4px solid var(--border);color:var(--text);}
+.btn-sm{padding:7px 11px;font-size:0.76rem;border-radius:9px;}
+.btn-danger{background:rgba(198,40,40,0.12);color:var(--danger);}
+.btn:active{transform:scale(0.97);}
+.btn-block{width:100%;}
+.quickgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px;}
+.qbtn{
+  display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--card);
+  border:1px solid var(--border);border-radius:14px;padding:11px 4px;cursor:pointer;box-shadow:var(--shadow);
+}
+.qbtn .qicon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.qbtn span{font-size:0.64rem;font-weight:700;color:var(--text-dim);text-align:center;}
+.qbtn:active{transform:scale(.95);}
+
+/* ---------------- Bottom nav ---------------- */
+.bottomnav{
+  position:fixed;bottom:0;left:0;right:0;z-index:50;
+  max-width:560px;margin:0 auto;
+  background:var(--card);border-top:1px solid var(--border);
+  display:flex;height:var(--nav-h);padding-bottom:env(safe-area-inset-bottom);
+  box-shadow:0 -2px 14px rgba(16,24,40,0.06);
+}
+.navbtn{
+  flex:1;border:none;background:transparent;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;color:var(--text-faint);cursor:pointer;position:relative;
+}
+.navbtn svg{width:21px;height:21px;}
+.navbtn span{font-size:0.62rem;font-weight:700;}
+.navbtn.active{color:var(--primary);}
+[data-theme="dark"] .navbtn.active{color:var(--accent);}
+.navbtn.active::before{content:'';position:absolute;top:2px;width:22px;height:3px;border-radius:3px;background:var(--accent);}
+
+/* ---------------- More grid ---------------- */
+.more-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px;}
+.more-item{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 8px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;box-shadow:var(--shadow);text-align:center;
+}
+.more-item .mi-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;}
+.more-item span{font-size:0.72rem;font-weight:700;}
+
+/* ---------------- Checklist / tasks ---------------- */
+.task-row{
+  display:flex;align-items:flex-start;gap:11px;padding:12px 4px;border-bottom:1px solid var(--border);
+}
+.task-row:last-child{border-bottom:none;}
+.chk{
+  width:22px;height:22px;border-radius:7px;border:2px solid var(--border);flex-shrink:0;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s;
+}
+.chk.done{background:var(--success);border-color:var(--success);}
+.chk svg{opacity:0;width:13px;height:13px;}
+.chk.done svg{opacity:1;}
+.task-main{flex:1;min-width:0;}
+.task-title{font-weight:700;font-size:0.88rem;}
+.task-title.strike{text-decoration:line-through;color:var(--text-faint);}
+.task-sub{font-size:0.76rem;color:var(--text-dim);margin-top:2px;}
+.task-meta{display:flex;gap:8px;margin-top:5px;flex-wrap:wrap;}
+.pill{
+  font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:20px;background:var(--border);color:var(--text-dim);
+  display:inline-flex;align-items:center;gap:4px;
+}
+.pill.tier-high{background:rgba(198,40,40,0.12);color:var(--danger);}
+.pill.tier-medium{background:rgba(249,168,37,0.16);color:#946200;}
+.pill.tier-low{background:rgba(46,125,50,0.12);color:var(--success);}
+.pill.dot::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;}
+
+/* ---------------- Chips / tabs ---------------- */
+.tabbar{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none;}
+.tabbar::-webkit-scrollbar{display:none;}
+.tabchip{
+  flex-shrink:0;padding:8px 14px;border-radius:20px;border:1px solid var(--border);background:var(--card);
+  font-size:0.78rem;font-weight:700;color:var(--text-dim);cursor:pointer;white-space:nowrap;
+}
+.tabchip.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+
+/* ---------------- Calendar ---------------- */
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.cal-head h3{font-size:1rem;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-dow{font-size:0.62rem;font-weight:700;color:var(--text-faint);text-align:center;padding-bottom:4px;}
+.cal-cell{
+  aspect-ratio:1;border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:0.74rem;font-weight:700;cursor:pointer;position:relative;background:var(--bg);color:var(--text-dim);
+  border:1.5px solid transparent;
+}
+.cal-cell.out{opacity:.25;pointer-events:none;}
+.cal-cell.today{border-color:var(--accent);}
+.cal-cell.selected{background:var(--primary);color:#fff;}
+.cal-cell .dot-row{display:flex;gap:2px;margin-top:2px;}
+.cal-cell .dot-row .d{width:4px;height:4px;border-radius:50%;background:var(--success);}
+.cal-cell.exam{background:var(--danger);color:#fff;}
+
+/* ---------------- Forms ---------------- */
+.field{margin-bottom:12px;}
+.field label{display:block;font-size:0.74rem;font-weight:700;color:var(--text-dim);margin-bottom:5px;}
+.field input,.field select,.field textarea{
+  width:100%;padding:10px 12px;border-radius:10px;border:1.4px solid var(--border);
+  background:var(--bg);color:var(--text);outline:none;
+}
+.field textarea{resize:vertical;min-height:70px;}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent);}
+.field-row{display:flex;gap:10px;}
+.field-row .field{flex:1;}
+
+/* ---------------- Modal ---------------- */
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(10,15,25,0.5);z-index:100;display:none;
+  align-items:flex-end;justify-content:center;
+}
+.modal-backdrop.open{display:flex;}
+.modal{
+  background:var(--card);width:100%;max-width:560px;border-radius:22px 22px 0 0;
+  padding:18px 18px calc(20px + env(safe-area-inset-bottom));max-height:88vh;overflow:auto;
+  animation:slideUp .28s ease;
+}
+@keyframes slideUp{from{transform:translateY(30px);opacity:.4;}to{transform:translateY(0);opacity:1;}}
+.modal-handle{width:38px;height:4px;border-radius:3px;background:var(--border);margin:0 auto 14px;}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.modal-head h3{font-size:1.05rem;}
+
+/* ---------------- Toast ---------------- */
+.toast{
+  position:fixed;left:50%;bottom:calc(var(--nav-h) + 16px);transform:translateX(-50%) translateY(20px);
+  background:#16202B;color:#fff;padding:11px 18px;border-radius:30px;font-size:0.82rem;font-weight:600;
+  z-index:200;opacity:0;pointer-events:none;transition:all .28s ease;box-shadow:var(--shadow-lg);
+  max-width:88%;text-align:center;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ---------------- Misc ---------------- */
+.empty-state{text-align:center;padding:34px 14px;color:var(--text-faint);}
+.empty-state svg{opacity:.4;margin-bottom:10px;}
+.empty-state p{font-size:0.84rem;}
+.divider{height:1px;background:var(--border);margin:14px 0;}
+.row-between{display:flex;justify-content:space-between;align-items:center;}
+.muted{color:var(--text-faint);font-size:0.76rem;}
+.badge-count{background:var(--danger);color:#fff;font-size:0.6rem;font-weight:800;border-radius:20px;padding:1px 6px;margin-left:4px;}
+.subject-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-family:var(--font-display);font-weight:700;}
+.list-item{display:flex;align-items:center;gap:12px;padding:12px 2px;border-bottom:1px solid var(--border);cursor:pointer;}
+.list-item:last-child{border-bottom:none;}
+.list-item-body{flex:1;min-width:0;}
+.list-item-title{font-weight:700;font-size:0.88rem;}
+.list-item-sub{font-size:0.75rem;color:var(--text-dim);margin-top:2px;}
+.chev{color:var(--text-faint);flex-shrink:0;}
+.switch{position:relative;width:44px;height:25px;flex-shrink:0;}
+.switch input{opacity:0;width:0;height:0;}
+.switch .sl{position:absolute;inset:0;background:var(--border);border-radius:30px;cursor:pointer;transition:.2s;}
+.switch .sl::before{content:'';position:absolute;width:19px;height:19px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.3);}
+.switch input:checked + .sl{background:var(--accent);}
+.switch input:checked + .sl::before{transform:translateX(19px);}
+.color-dot{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;}
+.color-dot.active{border-color:var(--text);}
+canvas{max-width:100%;}
+
+/* ---------------- Mentor Timeline ---------------- */
+.timeline{display:flex;flex-direction:column;}
+.tl-item{display:flex;gap:12px;}
+.tl-rail{display:flex;flex-direction:column;align-items:center;width:28px;flex-shrink:0;}
+.tl-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;box-shadow:0 0 0 4px var(--bg);}
+.tl-line{width:2px;flex:1;background:var(--border);margin:2px 0;min-height:14px;}
+.tl-item:last-child .tl-line{display:none;}
+.tl-content{flex:1;min-width:0;padding-bottom:4px;}
+.tl-time{font-size:0.68rem;font-weight:800;color:var(--text-faint);letter-spacing:.03em;text-transform:uppercase;padding-top:4px;}
+
+.flash-card{
+  background:linear-gradient(160deg,var(--primary),var(--accent));color:#fff;border-radius:20px;
+  min-height:170px;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;
+  font-family:var(--font-display);font-size:1.1rem;cursor:pointer;box-shadow:var(--shadow-lg);position:relative;
+}
+.flash-card .fc-tag{position:absolute;top:12px;left:14px;font-family:var(--font-body);font-size:0.62rem;opacity:.8;font-weight:700;letter-spacing:.05em;text-transform:uppercase;}
+.timer-display{font-family:var(--font-mono);font-size:3.4rem;text-align:center;font-weight:700;letter-spacing:.02em;margin:18px 0 6px;}
+.timer-ring-wrap{display:flex;justify-content:center;margin:10px 0;position:relative;}
+.heatmap{display:grid;grid-template-columns:repeat(15,1fr);gap:3px;}
+.heat-cell{aspect-ratio:1;border-radius:3px;background:var(--border);}
+.confetti-piece{position:fixed;top:-10px;width:8px;height:8px;z-index:300;pointer-events:none;}
+.streak-flame{display:flex;align-items:center;gap:5px;}
+.weekday-strip{display:flex;gap:6px;justify-content:space-between;margin-top:10px;}
+.wd-item{flex:1;text-align:center;font-size:0.62rem;color:var(--text-faint);font-weight:700;}
+.wd-dot{width:26px;height:26px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;margin:4px auto 3px;font-size:0.68rem;color:var(--text-dim);font-weight:800;}
+.wd-dot.done{background:var(--success);color:#fff;}
+.tag-chip{display:inline-flex;align-items:center;gap:4px;background:var(--border);padding:4px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;margin:3px 4px 0 0;}
+.tag-chip.weak{background:rgba(198,40,40,0.12);color:var(--danger);}
+.tag-chip.strong{background:rgba(46,125,50,0.12);color:var(--success);}
+.tag-chip button{background:none;border:none;color:inherit;cursor:pointer;margin-left:2px;padding:0;display:flex;}
+</style>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+<div id="app">
+  <header class="topbar">
+    <div class="brand" id="brandHome" style="cursor:pointer">
+      <div class="brand-mark"></div>
+      <div class="brand-name">Prelims Path</div>
+    </div>
+    <button class="topbar-btn" id="btnSearchToggle" aria-label="Search">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+    <button class="topbar-btn" id="btnThemeToggle" aria-label="Toggle dark mode">
+      <svg id="themeIcon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2 12h2M20 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+    </button>
+  </header>
+  <div class="search-wrap" id="searchWrap">
+    <input class="search-input" id="searchInput" placeholder="Search notes, current affairs, PYQs, flashcards…">
+    <div class="search-results" id="searchResults"></div>
+  </div>
+
+  <main id="screens">
+    <section class="screen" id="screen-home"></section>
+    <section class="screen" id="screen-today"></section>
+    <section class="screen" id="screen-planner"></section>
+    <section class="screen" id="screen-subjects"></section>
+    <section class="screen" id="screen-subjectDetail"></section>
+    <section class="screen" id="screen-anthropology"></section>
+    <section class="screen" id="screen-currentaffairs"></section>
+    <section class="screen" id="screen-mocktests"></section>
+    <section class="screen" id="screen-revision"></section>
+    <section class="screen" id="screen-pyq"></section>
+    <section class="screen" id="screen-answerwriting"></section>
+    <section class="screen" id="screen-habits"></section>
+    <section class="screen" id="screen-timer"></section>
+    <section class="screen" id="screen-statistics"></section>
+    <section class="screen" id="screen-flashcards"></section>
+    <section class="screen" id="screen-errornotebook"></section>
+    <section class="screen" id="screen-weaktopics"></section>
+    <section class="screen" id="screen-more"></section>
+    <section class="screen" id="screen-settings"></section>
+  </main>
+
+  <nav class="bottomnav">
+    <button class="navbtn" data-screen="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1v-9"/></svg><span>Home</span></button>
+    <button class="navbtn" data-screen="today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/><path d="M8.5 14.5l2 2 4-4"/></svg><span>Today</span></button>
+    <button class="navbtn" data-screen="planner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/><circle cx="8" cy="15" r="1"/><circle cx="12" cy="15" r="1"/><circle cx="16" cy="15" r="1"/></svg><span>Planner</span></button>
+    <button class="navbtn" data-screen="subjects"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg><span>Subjects</span></button>
+    <button class="navbtn" data-screen="more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg><span>More</span></button>
+  </nav>
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" id="modalBody"></div>
+</div>
+
+<script>
+'use strict';
+/* ============================================================================
+   PRELIMS PATH — UPSC CSE Preparation App
+   Single-file PWA. Pure HTML/CSS/JS. No frameworks, no backend.
+   ============================================================================ */
+
+/* ---------- Constants ---------- */
+const START_DATE_STR = '2026-07-15';
+const EXAM_DATE_STR  = '2027-05-24';
+const START_DATE = new Date(START_DATE_STR + 'T00:00:00');
+const EXAM_DATE  = new Date(EXAM_DATE_STR + 'T00:00:00');
+const DAY_MS = 86400000;
+const TOTAL_DAYS = Math.round((EXAM_DATE - START_DATE) / DAY_MS) + 1;
+const REVISION_OFFSETS = [1,7,15,30,60,90];
+const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+const QUOTES = [
+  "Success is the sum of small efforts repeated day in and day out.",
+  "The exam rewards consistency, not intensity.",
+  "Revise what you know before you chase what you don't.",
+  "An answer well-structured beats an answer well-read.",
+  "Discipline is choosing between what you want now and what you want most.",
+  "Every current affairs entry today is a static-linked answer tomorrow.",
+  "You don't need more hours. You need a plan for the hours you have.",
+  "The Prelims is a test of elimination, not just knowledge.",
+  "Small daily gains compound into the rank you want.",
+  "Read less, revise more. Retention wins over Prelims day.",
+  "Ethics is not a subject you study — it's a lens you sharpen.",
+  "Your weakest subject deserves your best hour, not your leftover one.",
+  "The syllabus is a map. Current affairs is the terrain.",
+  "Mock tests don't measure knowledge — they measure temperament.",
+  "One focused hour beats four distracted ones."
+];
+
+const UPSC_FACTS = [
+  "The UPSC CSE has three stages: Prelims, Mains and Interview (Personality Test).",
+  "Prelims consists of two papers — GS Paper I and CSAT — both objective type.",
+  "CSAT is qualifying in nature; you need 33% to clear it.",
+  "Mains has 9 papers, of which 2 (language papers) are qualifying.",
+  "Anthropology is one of the most consistently high-scoring optional subjects.",
+  "The Civil Services Exam was first conducted in its modern form in 1922.",
+  "Negative marking in Prelims is 1/3rd of the marks assigned to that question.",
+  "The UPSC building in Delhi is called Dholpur House.",
+  "Essay paper carries 250 marks in the Mains examination.",
+  "The Interview (Personality Test) carries 275 marks."
+];
+
+/* ---------- Subject data (GS) ---------- */
+const SUBJECTS = {
+  polity:      { name:'Polity', tier:'high', weight:6, color:'#0D47A1', chapters:[
+    'Historical Background of the Constitution','Constituent Assembly','The Preamble','Union and its Territory','Citizenship','Fundamental Rights','Directive Principles of State Policy','Fundamental Duties','Constitutional Amendment Procedure','Basic Structure Doctrine','Parliamentary System of Government','Federal System','Centre–State Relations','President & Governor','Prime Minister & Council of Ministers','Parliament: Lok Sabha & Rajya Sabha','Judiciary: Supreme Court & High Courts','Local Government: Panchayati Raj & Municipalities','Constitutional Bodies (EC, UPSC, CAG)','Finance Commission','Non-Constitutional Bodies (NITI Aayog, CVC, CBI)','Statutory & Regulatory Bodies','Governance & e-Governance, RTI','Pressure Groups & Political Parties','Representation of the People Act','Judicial Review & Judicial Activism'] },
+  economy:     { name:'Economy', tier:'high', weight:8, color:'#1976D2', chapters:[
+    'Introduction to Economy & Sectors of Economy','Economic Growth, Development & Happiness Index','Population, Poverty & Unemployment','Human Development Index & related Indices','Inflation & Price Indices (WPI, CPI)','Banking Structure in India','RBI Functions & Monetary Policy','Money Market Instruments','Capital Market & SEBI Basics','Union Budget — Structure & Terms','Fiscal Policy, Deficit Types & FRBM Act','Public Debt & Government Borrowing','Taxation — Direct Taxes','Taxation — Indirect Taxes & GST','External Sector — Balance of Payments','Exchange Rate & Foreign Exchange Reserves','Foreign Trade Policy & WTO','Agriculture Economy & MSP','Industrial Policy & MSME Sector','Infrastructure, Investment Models & NITI Aayog'] },
+  modernHist:  { name:'Modern History', tier:'high', weight:6, color:'#283593', chapters:[
+    'Advent of Europeans in India','Expansion of British Power','Economic Impact of British Rule','Socio-Religious Reform Movements','Revolt of 1857','Rise of Indian Nationalism','Formation of the INC','Moderates & Extremists Phase','Partition of Bengal & Swadeshi','Home Rule Movement','Gandhian Era Begins','Non-Cooperation Movement','Civil Disobedience Movement','Revolutionary Movements','Quit India Movement','INA & Subhas Chandra Bose','Constitutional Developments 1858–1935','Communalism & Partition','Post-Independence Consolidation','Princely States Integration'] },
+  environment: { name:'Environment', tier:'high', weight:6, color:'#2E7D32', chapters:[
+    'Ecology Basics & Ecosystem','Biodiversity & Conservation','Protected Area Network of India','Climate Change Basics','International Conventions (UNFCCC, CBD, CITES)','Pollution: Air, Water, Soil','Environmental Impact Assessment','Biodiversity Hotspots of India','Wildlife Protection Act & Schedules','Forest Types & Forest Policy','Wetlands & Ramsar Sites','Environmental Institutions','Renewable Energy','Waste Management Rules','Environmental Movements in India','Species in the News','National Parks & Tiger Reserves'] },
+  geography:   { name:'Geography', tier:'high', weight:6, color:'#00695C', chapters:[
+    'Physical Geography: Geomorphology','Climatology Basics','Oceanography','Indian Physiography','Drainage System of India','Indian Climate & Monsoon','Soils of India','Natural Vegetation of India','Agriculture Geography','Mineral & Energy Resources','Industries in India','Population Geography','Transport Network of India','World Geography: Physical Features','World Climate Regions','Map-based Locations in the News'] },
+  ancient:     { name:'Ancient History', tier:'medium', weight:3, color:'#6A1B9A', chapters:[
+    'Prehistoric Period','Indus Valley Civilization','Vedic Period','Mahajanapadas & Rise of Magadha','Buddhism & Jainism','Mauryan Empire','Post-Mauryan Period','Gupta Empire','Post-Gupta Period','South Indian Kingdoms (Sangam Age, Cholas)','Art & Architecture of Ancient India'] },
+  medieval:    { name:'Medieval History', tier:'medium', weight:3, color:'#7B1FA2', chapters:[
+    'Early Medieval India','Delhi Sultanate','Mughal Empire','Maratha Empire','Bhakti & Sufi Movements','Regional Kingdoms','Medieval Administrative Systems','Art, Architecture & Culture of Medieval India'] },
+  artCulture:  { name:'Art & Culture', tier:'medium', weight:3, color:'#AD1457', chapters:[
+    'Indian Architecture','Indian Sculpture','Indian Paintings','Indian Music & Dance Forms','Indian Theatre & Puppetry','Indian Literature','Religion & Philosophy','Fairs, Festivals & Crafts','UNESCO World Heritage Sites (Cultural)'] },
+  scienceTech: { name:'Science & Tech', tier:'medium', weight:4, color:'#00838F', chapters:[
+    'Space Technology','Nuclear Technology','Defence Technology','Biotechnology','IT & Computers','Nanotechnology','Health & Medicine','Robotics & AI','New Inventions & Discoveries'] },
+  intSecurity: { name:'Internal Security', tier:'low', weight:2, color:'#4E342E', chapters:[
+    'Linkages of Organised Crime & Terrorism','Role of External State & Non-State Actors','Communication Networks & Security','Border Area Management','Security Forces & Agencies','Money Laundering','Cyber Security'] },
+  disaster:    { name:'Disaster Management', tier:'low', weight:1, color:'#BF360C', chapters:[
+    'Disaster Classification','Disaster Management Cycle','Institutional Framework (NDMA)','Case Studies of Major Disasters'] },
+  society:     { name:'Society', tier:'low', weight:2, color:'#5D4037', chapters:[
+    'Indian Society: Salient Features','Diversity of India','Poverty & Development Issues','Population & Associated Issues','Urbanization: Problems & Remedies','Role of Women & Women’s Organisations','Social Empowerment','Communalism, Regionalism & Secularism','Globalization’s Effect on Society'] },
+  governance:  { name:'Governance', tier:'low', weight:2, color:'#37474F', chapters:[
+    'Government Policies & Interventions','Development Processes & NGOs','Welfare Schemes for Vulnerable Sections','Rights Issues (Human Rights, RTE, etc.)','Governance Reforms','Transparency & Accountability'] },
+  ethics:      { name:'Ethics', tier:'low', weight:2, color:'#8D6E63', chapters:[
+    'Ethics & Human Interface','Human Values','Attitude','Aptitude & Foundational Values','Emotional Intelligence','Contributions of Moral Thinkers','Public / Civil Service Values','Probity in Governance','Case Studies in Ethics'] },
+  worldHist:   { name:'World History', tier:'low', weight:2, color:'#455A64', chapters:[
+    'Industrial Revolution','World War I & II','Redrawal of National Boundaries','Colonization & Decolonization','Political Philosophies (Communism, Capitalism, Fascism)'] },
+  essay:       { name:'Essay', tier:'low', weight:2, color:'#616161', chapters:[
+    'Philosophical Essays Practice','Social Issues Essays Practice','Economic Essays Practice','Current-Affairs-based Essays'] }
+};
+const SUBJECT_KEYS = Object.keys(SUBJECTS);
+
+/* ---------- Anthropology (optional) ---------- */
+const ANTHRO = {
+  paper1: { name:'Paper I — Anthropology Theory', chapters:[
+    'Meaning, Scope & Development of Anthropology','Human Evolution & Primatology','Prehistoric Archaeology','Concept of Culture & Society','Marriage, Family & Kinship','Economic Organization','Political Organization & Social Control','Religion in Simple Societies','Anthropological Theories (Evolutionism to Post-Modernism)','Culture Change & Applied Anthropology','Research Methods, Fieldwork Tradition','Human Genetics & Physical Anthropology'] },
+  paper2: { name:'Paper II — Indian Anthropology', chapters:[
+    'Evolution of Indian Culture & Civilization','Demographic Profile of India','Structure & Nature of Traditional Society','Tribal Situation in India','Indian Village Studies','Caste System in India','Sacred Complex & Nature-Man-Spirit Complex','Impact of Buddhism, Jainism, Islam & Christianity','Tribe-Caste Continuum','Ethnic Problems & Political Development','Development Projects & Tribal Displacement','Tribal Development Programmes & Administration','Constitutional Provisions for Scheduled Tribes'] }
+};
+
+/* ---------- Current Affairs categories ---------- */
+const CA_CATEGORIES = ['Polity & Governance','Economy','International Relations','Environment','Science & Tech','Government Schemes','Reports & Indices','Miscellaneous'];
+
+/* ---------- Habit list ---------- */
+const HABITS = [
+  {key:'wakeUp', label:'Wake up on time'},
+  {key:'sleep', label:'Slept 7+ hrs'},
+  {key:'newspaper', label:'Newspaper read'},
+  {key:'exercise', label:'Exercise'},
+  {key:'meditation', label:'Meditation'},
+  {key:'revision', label:'Revision done'},
+  {key:'mcqs', label:'MCQs solved'},
+  {key:'answerWriting', label:'Answer writing'},
+  {key:'reading', label:'Reading (books)'},
+  {key:'water', label:'Water intake (3L+)'}
+];
+
+/* ============================================================================
+   STUDENT PROFILE — drives every personalised part of the mentor planner
+   ============================================================================ */
+const PROFILE = {
+  examLabel:'UPSC CSE 2027',
+  studyHoursPerDay:8,
+  gym:{ start:'18:00', end:'19:00' },
+  sundayHalfDay:true,
+  optional:'Anthropology',
+  concernNote:'Coaching already completed once — concepts are weak. Planner prioritises understanding over speed.',
+  resources:{
+    polity:'Laxmikanth — Indian Polity',
+    economy:"Mrunal Sir's Economy Notes (fundamentals-first sequence)",
+    modernHist:'Spectrum — A Brief History of Modern India',
+    geography:'NCERT + G.C. Leong',
+    environment:'PMF IAS Environment',
+    ancient:'NCERT Old Ancient India',
+    medieval:'NCERT Old Medieval India',
+    artCulture:'Nitin Singhania — Art & Culture',
+    scienceTech:'Current Affairs + NCERT Science',
+    intSecurity:'Ashok Kumar — Internal Security',
+    disaster:'NDMA Guidelines + Current Affairs',
+    society:'NCERT Sociology + Current Affairs',
+    governance:'2nd ARC Reports + Current Affairs',
+    ethics:'Lexicon / G Subba Rao Ethics',
+    worldHist:'Norman Lowe — Mastering Modern World History',
+    essay:'Essay Compilations + Practice',
+    anthro_paper1:'Vividh IAS / Nandini notes — Anthropology Paper I',
+    anthro_paper2:'Vividh IAS / Nandini notes — Anthropology Paper II'
+  }
+};
+function bookFor(subjectKey){ return PROFILE.resources[subjectKey] || 'Standard Reference'; }
+
+/* ---------- JULY 2026 — Polity Foundations (Laxmikanth), exact mentor sequence ---------- */
+const JULY_SEQUENCE = [
+  { chapterIndex:0, title:'Historical Background of the Constitution', points:['Regulating Act 1773','Pitt\'s India Act 1784','Charter Acts 1793 / 1813 / 1833 / 1853','Government of India Act 1858','Indian Councils Acts 1861 / 1892 / 1909','Government of India Act 1919','Government of India Act 1935','Indian Independence Act 1947'] },
+  { chapterIndex:1, title:'Constituent Assembly', points:['Formation & composition of the Constituent Assembly','Objectives Resolution','Major committees','Enactment & adoption (26 Nov 1949 / 26 Jan 1950)'] },
+  { chapterIndex:2, title:'The Preamble', points:['Text & ideals of the Preamble','Sovereign, Socialist, Secular, Democratic, Republic','Justice, Liberty, Equality, Fraternity','Is the Preamble part of the Constitution? — Kesavananda Bharati'] },
+  { chapterIndex:3, title:'Union and its Territory', points:['Formation of new states — Articles 2 & 3','Union vs Federation of States','Territorial changes since 1950'] },
+  { chapterIndex:4, title:'Citizenship', points:['Constitutional provisions — Articles 5–11','Citizenship Act 1955 & amendments','CAA 2019 in brief','Overseas Citizen of India (OCI)'] },
+  { chapterIndex:5, title:'Fundamental Rights — Part 1', points:['Right to Equality (Art 14–18)','Right to Freedom (Art 19–22)'] },
+  { chapterIndex:5, title:'Fundamental Rights — Part 2', points:['Right against Exploitation (Art 23–24)','Right to Freedom of Religion (Art 25–28)','Cultural & Educational Rights (Art 29–30)'] },
+  { chapterIndex:5, title:'Fundamental Rights — Part 3', points:['Right to Constitutional Remedies (Art 32)','Writs — Habeas Corpus, Mandamus, Prohibition, Certiorari, Quo Warranto','Case-law consolidation'] },
+  { chapterIndex:6, title:'Directive Principles of State Policy — Part 1', points:['Classification: Gandhian, Socialist, Liberal-Intellectual','Important Articles (36–48)'] },
+  { chapterIndex:6, title:'Directive Principles of State Policy — Part 2', points:['DPSP vs Fundamental Rights','Articles 48A–51','PYQ-heavy comparison table'] },
+  { chapterIndex:7, title:'Fundamental Duties', points:['Article 51A — the eleven duties','Swaran Singh Committee','Significance & enforceability'] },
+  { chapterIndex:8, title:'Constitutional Amendment Procedure', points:['Article 368 procedure','Types of amendment (simple / special / with ratification)','Landmark amendments — 1st, 42nd, 44th, 73rd, 74th, 101st'] },
+  { chapterIndex:9, title:'Basic Structure Doctrine', points:['Origin — Kesavananda Bharati (1973)','Elements of the Basic Structure','Subsequent cases — Minerva Mills, Waman Rao'] },
+  { chapterIndex:9, title:'Consolidation & Full-Topic Revision', isBuffer:true, points:['Revise all 10 Polity foundation chapters covered this month','Attempt a mixed MCQ set spanning the full month'] }
+];
+
+/* ---------- AUGUST 2026 — Economy from fundamentals, Mrunal Sir's sequence only ---------- */
+const AUGUST_SEQUENCE = SUBJECTS.economy.chapters.map((ch,i)=>({
+  chapterIndex:i, title:ch, points:[ch+' — build from first principles: definitions, examples, numbers before terminology']
+}));
+
+/* ---------- Generic month sequence builder (reuses existing chapter lists) ---------- */
+function buildGenericSequence(subjectKey){
+  return SUBJECTS[subjectKey].chapters.map((ch,i)=>({ subjectKey, chapterIndex:i, title:ch, points:[ch] }));
+}
+function buildMultiSequence(keys){
+  const lists = keys.map(k=>SUBJECTS[k].chapters.map((ch,i)=>({subjectKey:k, chapterIndex:i, title:ch, points:[ch]})));
+  const out = []; let ptr = 0, more = true;
+  while(more){
+    more = false;
+    lists.forEach(l=>{ if(l[ptr]){ out.push(l[ptr]); more = true; } });
+    ptr++;
+  }
+  return out;
+}
+// Tag subjectKey onto July/August entries (single-subject months)
+JULY_SEQUENCE.forEach(it=>it.subjectKey='polity');
+AUGUST_SEQUENCE.forEach(it=>it.subjectKey='economy');
+
+/* ---------- Month configuration: 15 Jul 2026 → 24 May 2027 ---------- */
+const MONTHS_CONFIG = {
+  '2026-07': { label:'July 2026', focusLabel:'Polity Foundations (Laxmikanth)', sequence:JULY_SEQUENCE, mainsAdvanced:false },
+  '2026-08': { label:'August 2026', focusLabel:"Economy from Fundamentals — Mrunal Sir's Sequence", sequence:AUGUST_SEQUENCE, mainsAdvanced:true },
+  '2026-09': { label:'September 2026', focusLabel:'Modern History (Spectrum)', sequence:buildGenericSequence('modernHist'), mainsAdvanced:true },
+  '2026-10': { label:'October 2026', focusLabel:'Geography (NCERT + G.C. Leong)', sequence:buildGenericSequence('geography'), mainsAdvanced:true },
+  '2026-11': { label:'November 2026', focusLabel:'Environment (PMF IAS)', sequence:buildGenericSequence('environment'), mainsAdvanced:true },
+  '2026-12': { label:'December 2026', focusLabel:'Ancient & Medieval History + Art & Culture', sequence:buildMultiSequence(['ancient','medieval','artCulture']), mainsAdvanced:true },
+  '2027-01': { label:'January 2027', focusLabel:'Science & Tech + Internal Security + Disaster Mgmt', sequence:buildMultiSequence(['scienceTech','intSecurity','disaster']), mainsAdvanced:true },
+  '2027-02': { label:'February 2027', focusLabel:'Society, Governance, Ethics & World History', sequence:buildMultiSequence(['society','governance','ethics','worldHist']), mainsAdvanced:true },
+  '2027-03': { label:'March 2027', focusLabel:'Full-Syllabus Revision Round 1 + Sectional Mocks', mode:'revision', mainsAdvanced:true },
+  '2027-04': { label:'April 2027', focusLabel:'Full-Syllabus Revision Round 2 + Full-Length Mocks', mode:'revision', mainsAdvanced:true },
+  '2027-05': { label:'May 2027', focusLabel:'Final Revision, Value Addition & Test Series', mode:'final', mainsAdvanced:true }
+};
+function getMonthKey(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+function getMonthConfig(dateStr){ return MONTHS_CONFIG[getMonthKey(parseISO(dateStr))]; }
+/* Zero-based index of a date among the non-Sunday days of its plan-month (clipped to START_DATE) */
+function weekdayIndexInMonth(dateStr){
+  const d = parseISO(dateStr);
+  let firstOfMonth = new Date(d.getFullYear(), d.getMonth(), 1);
+  if(firstOfMonth < START_DATE) firstOfMonth = new Date(START_DATE);
+  let count = 0, cur = new Date(firstOfMonth);
+  while(cur <= d){
+    if(cur.getDay() !== 0) count++;
+    cur = addDays(cur, 1);
+  }
+  return count - 1;
+}
+function isLastDayOfMonth(dateStr){
+  const d = parseISO(dateStr);
+  const next = addDays(d, 1);
+  return next.getMonth() !== d.getMonth() || fmtISO(d) === EXAM_DATE_STR || addDays(d,1) > EXAM_DATE;
+}
+
+/* ---------- Icon helper (inline SVGs, no external deps) ---------- */
+function icon(name, sz){
+  sz = sz||20;
+  const icons = {
+    flame:'<path d="M12 2c1 3-3 4-3 8a3 3 0 006 0c1.5 1 2 2.8 2 4.2A5.2 5.2 0 0112 19.4 5.2 5.2 0 016.8 14.2C6.8 9 12 7 12 2z"/>',
+    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+    check:'<path d="M20 6L9 17l-5-5"/>',
+    book:'<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>',
+    target:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="0.8" fill="currentColor"/>',
+    repeat:'<path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/>',
+    news:'<path d="M4 4h13v14a2 2 0 002 2H6a2 2 0 01-2-2V4z"/><path d="M17 8h3v11a2 2 0 01-2 2"/><path d="M7 8h7M7 11h7M7 14h4"/>',
+    trophy:'<path d="M8 21h8M12 17v4"/><path d="M7 4h10v5a5 5 0 01-10 0V4z"/><path d="M7 5H4a3 3 0 003 3M17 5h3a3 3 0 01-3 3"/>',
+    pen:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/>',
+    stack:'<path d="M12 2l9 5-9 5-9-5z"/><path d="M3 12l9 5 9-5"/><path d="M3 17l9 5 9-5"/>',
+    chart:'<path d="M4 20V10M11 20V4M18 20v-7"/>',
+    fire:'<path d="M12 2c1 3-3 4-3 8a3 3 0 006 0c1.5 1 2 2.8 2 4.2A5.2 5.2 0 0112 19.4 5.2 5.2 0 016.8 14.2C6.8 9 12 7 12 2z"/>',
+    heart:'<path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 000-7.8z"/>',
+    settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1-1.6 1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1 1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V9a1.7 1.7 0 001.5 1h.1a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/>',
+    globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/>',
+    layers:'<path d="M12 2l9 5-9 5-9-5z"/><path d="M3 12l9 5 9-5"/>',
+    bookmark:'<path d="M6 3h12v18l-6-4-6 4V3z"/>',
+    plus:'<path d="M12 5v14M5 12h14"/>',
+    timer:'<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6M12 2v3"/>',
+    people:'<circle cx="9" cy="8" r="3.2"/><path d="M2.5 20a6.5 6.5 0 0113 0"/><circle cx="17.5" cy="9.5" r="2.6"/><path d="M15.7 13a5 5 0 015.8 6.8"/>',
+    shield:'<path d="M12 2l8 3.5V11c0 5.2-3.4 8.7-8 10-4.6-1.3-8-4.8-8-10V5.5L12 2z"/>',
+    close:'<path d="M18 6L6 18M6 6l12 12"/>',
+    edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/>',
+    trash:'<path d="M3 6h18"/><path d="M8 6V4h8v2M6 6l1 15h10l1-15"/>',
+    calendar:'<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/>',
+    arrowLeft:'<path d="M19 12H5M12 19l-7-7 7-7"/>',
+    arrowRight:'<path d="M5 12h14M12 5l7 7-7 7"/>',
+    play:'<path d="M6 4l14 8-14 8z"/>',
+    pause:'<path d="M7 4h3v16H7zM14 4h3v16h-3z"/>',
+    reset:'<path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.7 2.7L3 8"/><path d="M3 3v5h5"/>',
+    dice:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1" fill="currentColor"/><circle cx="16" cy="16" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/>',
+    download:'<path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 19h16"/>',
+    upload:'<path d="M12 21V9m0 0l-4 4m4-4l4 4"/><path d="M4 21h16"/>'
+  };
+  return `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${icons[name]||''}</svg>`;
+}
+
+/* ============================================================================
+   STORAGE / STATE
+   ============================================================================ */
+const STORAGE_KEY = 'prelimsPathV2';
+
+function defaultState(){
+  return {
+    theme:'light', accent:'accent1', fontSize:'md',
+    days:{},            // 'YYYY-MM-DD' -> {done:{}, notes:'', studyMinutes:0}
+    subjectProgress:{}, // subjectKey -> {chapterDone:[bool], notes:'', weak:[], strong:[]}
+    anthroProgress:{ paper1:{chapterDone:[], notes:'', weak:[], strong:[]}, paper2:{chapterDone:[], notes:'', weak:[], strong:[]} },
+    revisions:[],       // {id, subjectKey, subjectName, chapter, dueDate, done, originDate}
+    currentAffairs:[],  // {id,date,category,title,notes,bookmarked}
+    mockTests:[],       // {id,date,type,subject,total,obtained,negative,accuracy,timeTaken,weakSubjects,notes}
+    pyq:[],             // {id,year,subject,topic,solved,correctPct,difficulty,bookmarked}
+    answerWriting:[],   // {id,date,question,wordCount,timeMinutes,evalNotes}
+    habits:{},          // 'YYYY-MM-DD' -> {habitKey:bool}
+    timerLogs:[],       // {date,minutes,type}
+    flashcards:[],      // {id,subject,front,back}
+    mcqLogs:[],         // {id,date,subjectKey,chapterTitle,correct,total,accuracy}
+    errorNotebook:[],   // {id,date,question,wrongConcept,correctConcept,reason,revisionDate,subject,resolved}
+    weakTopics:[],      // {id,subjectKey,subjectName,topic,reason,dateAdded,resolved}
+    pyqWrongCounts:{},  // 'subject::topic' -> count of wrong attempts
+    caMagazines:{},     // 'YYYY-MM' -> boolean (monthly compilation revised)
+    streak:{current:0, longest:0, lastActiveDate:null},
+    badges:[],
+    lastOpenDate:null
+  };
+}
+
+let STATE = loadState();
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return defaultState();
+    const parsed = JSON.parse(raw);
+    return Object.assign(defaultState(), parsed);
+  }catch(e){
+    console.error('Failed to load state, using defaults', e);
+    return defaultState();
+  }
+}
+function saveState(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE));
+  }catch(e){ console.error('Save failed', e); }
+}
+function getDay(dateStr){
+  if(!STATE.days[dateStr]) STATE.days[dateStr] = {done:{}, notes:'', studyMinutes:0};
+  return STATE.days[dateStr];
+}
+function getSubjectProgress(key){
+  if(!STATE.subjectProgress[key]) STATE.subjectProgress[key] = {chapterDone:[], notes:'', weak:[], strong:[]};
+  return STATE.subjectProgress[key];
+}
+function getHabitDay(dateStr){
+  if(!STATE.habits[dateStr]) STATE.habits[dateStr] = {};
+  return STATE.habits[dateStr];
+}
+
+/* ============================================================================
+   DATE UTILITIES
+   ============================================================================ */
+function fmtISO(d){
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function parseISO(s){ return new Date(s+'T00:00:00'); }
+function addDays(d, n){ return new Date(d.getTime() + n*DAY_MS); }
+function todayDate(){ const t = new Date(); return new Date(t.getFullYear(), t.getMonth(), t.getDate()); }
+function todayISO(){ return fmtISO(todayDate()); }
+function dayIndexOf(dateStr){
+  return Math.round((parseISO(dateStr) - START_DATE) / DAY_MS);
+}
+function isWithinPlan(dateStr){
+  const idx = dayIndexOf(dateStr);
+  return idx >= 0 && idx < TOTAL_DAYS;
+}
+function fmtHuman(dateStr){
+  const d = parseISO(dateStr);
+  return DOW[d.getDay()]+', '+d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear();
+}
+function fmtShort(dateStr){
+  const d = parseISO(dateStr);
+  return d.getDate()+' '+MONTHS[d.getMonth()].slice(0,3);
+}
+function daysRemaining(){
+  const t = todayDate();
+  return Math.max(0, Math.ceil((EXAM_DATE - t)/DAY_MS));
+}
+function planProgressPct(){
+  const idx = dayIndexOf(todayISO());
+  const clamped = Math.min(Math.max(idx,0), TOTAL_DAYS-1);
+  return Math.round((clamped/(TOTAL_DAYS-1))*100);
+}
+
+/* ============================================================================
+   SCHEDULE ENGINE (revision-phase fallback) — weighted round-robin across
+   all subjects, proportional to UPSC weightage. Used only in the March/April/
+   May full-syllabus-revision months, where "study" cycles the whole syllabus.
+   ============================================================================ */
+let SCHEDULE = null; // array[TOTAL_DAYS] of {subjectKey, chapterIndex}
+function buildSchedule(){
+  if(SCHEDULE) return SCHEDULE;
+  const entries = SUBJECT_KEYS.map(k=>({key:k, weight:SUBJECTS[k].weight}));
+  const totalWeight = entries.reduce((a,e)=>a+e.weight,0);
+  const acc = {}; entries.forEach(e=>acc[e.key]=0);
+  const chapterPtr = {}; entries.forEach(e=>chapterPtr[e.key]=0);
+  const out = [];
+  for(let i=0;i<TOTAL_DAYS;i++){
+    entries.forEach(e=>acc[e.key]+=e.weight);
+    let best = entries[0];
+    for(const e of entries){ if(acc[e.key] > acc[best.key]) best = e; }
+    acc[best.key] -= totalWeight;
+    const chapters = SUBJECTS[best.key].chapters;
+    const cIdx = chapterPtr[best.key] % chapters.length;
+    chapterPtr[best.key]++;
+    out.push({subjectKey:best.key, chapterIndex:cIdx});
+  }
+  SCHEDULE = out;
+  return out;
+}
+
+/* ============================================================================
+   MENTOR TIMELINE ENGINE
+   Builds ONE continuous daily timeline (study → notes → MCQs → revision →
+   current affairs → gym → mains → reflection) exactly as a human mentor
+   would hand it to you — not separate disconnected task lists.
+   ============================================================================ */
+function getDayTimeline(dateStr){
+  if(!isWithinPlan(dateStr)) return null;
+  const d = parseISO(dateStr);
+  const isSunday = d.getDay() === 0;
+  const cfg = getMonthConfig(dateStr);
+  const idx = dayIndexOf(dateStr);
+  const dow = d.getDay();
+  const isAnthroDay = dow === 2 || dow === 5; // Tue / Fri — optional subject slot
+
+  if(isSunday) return buildSundayTimeline(dateStr, cfg);
+
+  let subjectKey, chapterIndex, title, points, focusLabel;
+  if(cfg.mode === 'revision' || cfg.mode === 'final'){
+    const rot = buildSchedule();
+    const slot = rot[idx % rot.length];
+    subjectKey = slot.subjectKey; chapterIndex = slot.chapterIndex;
+    title = SUBJECTS[subjectKey].chapters[chapterIndex];
+    points = [title];
+    focusLabel = cfg.focusLabel;
+  } else {
+    const seq = cfg.sequence;
+    const wIdx = weekdayIndexInMonth(dateStr);
+    const item = seq[((wIdx % seq.length) + seq.length) % seq.length];
+    subjectKey = item.subjectKey; chapterIndex = item.chapterIndex;
+    title = item.title; points = item.points || [item.title];
+    focusLabel = cfg.focusLabel;
+  }
+  const subjName = SUBJECTS[subjectKey] ? SUBJECTS[subjectKey].name : subjectKey;
+  const book = bookFor(subjectKey);
+  const mainsAdvanced = cfg.mainsAdvanced;
+
+  const blocks = [
+    { id:'study', time:'08:00 – 10:30', type:'study', icon:'book',
+      title:`${subjName}: ${title}`, points, target:'Understand — not memorise.',
+      book, subjectKey, chapterIndex },
+    { id:'notes', time:'10:50 – 13:00', type:'notes', icon:'edit',
+      title:'Make structured notes', points:['Condense today\'s concept into your own short notes','Use diagrams / flowcharts wherever it helps recall'] },
+    { id:'mcq', time:'14:00 – 16:00', type:'mcq', icon:'target',
+      title:`MCQ Practice — ${subjName}`, points:['20–30 topic-wise MCQs from today\'s concept','Log your score — weak topics (<70%) are auto-flagged'],
+      subjectKey, chapterTitle:title },
+    { id:'revision', time:'16:00 – 17:00', type:'revision', icon:'repeat',
+      title:'Spaced Revision', points:['Clear everything due today (auto-scheduled at 1/7/15/30/60/90 days)'] },
+    { id:'ca', time:'17:00 – 18:00', type:'ca', icon:'news',
+      title:'Current Affairs', points:['Daily newspaper / compilation + notes','Tag entries to today\'s static topic where relevant'] },
+    { id:'gym', time:PROFILE.gym.start+' – '+PROFILE.gym.end, type:'gym', icon:'heart',
+      title:'Gym', fixed:true, points:['Fixed block — protect this hour every day'] },
+    { id:'mains10', time:'19:30 – 20:15', type:'mains', icon:'pen',
+      title:'Mains Answer Writing — 10 Marker', points:['~150 words in ~9 minutes','Question drawn from today\'s topic'], marks:10, subjectKey }
+  ];
+  if(mainsAdvanced && idx % 2 === 0){
+    blocks.push({ id:'mains15', time:'20:15 – 21:00', type:'mains', icon:'pen',
+      title:'Mains Answer Writing — 15 Marker', points:['~250 words in ~13 minutes','Alternate-day question — integrated slowly as per plan'], marks:15, subjectKey });
+  }
+  if(isAnthroDay){
+    blocks.push({ id:'anthro', time:'21:00 – 21:45', type:'anthro', icon:'shield',
+      title:`Anthropology (Optional) — ${(Math.floor(idx/7)%2===0)?'Paper I':'Paper II'}`,
+      points:['Dedicated optional-subject slot — Tue & Fri'],
+      paper: (Math.floor(idx/7)%2===0) ? 'paper1' : 'paper2' });
+  }
+  blocks.push({ id:'reflection', time: isAnthroDay ? '21:45 – 22:00' : '21:00 – 21:15', type:'reflection', icon:'check',
+    title:'Daily Reflection', points:['What went well today? What will you fix tomorrow?'] });
+
+  if(isLastDayOfMonth(dateStr)){
+    blocks.push({ id:'monthlyReview', time:'22:00 – 22:20', type:'review', icon:'chart',
+      title:'Monthly Review', points:['Review the whole month\'s completion %, weak topics & mock trend'] });
+  }
+
+  return { dateStr, monthLabel:cfg.label, focusLabel, isSunday:false, dayIndex:idx, blocks };
+}
+
+function buildSundayTimeline(dateStr, cfg){
+  return {
+    dateStr, monthLabel:cfg.label, focusLabel:'Sunday — Half Day', isSunday:true, dayIndex:dayIndexOf(dateStr),
+    blocks:[
+      { id:'sunRevision', time:'09:00 – 11:00', type:'revision', icon:'repeat',
+        title:'Weekly Revision', points:['Revise everything studied this week, concept-first'] },
+      { id:'sunTest', time:'11:00 – 13:00', type:'mcq', icon:'target',
+        title:'Sunday Sectional Test', points:['Full sectional test on this week\'s subject','Vision IAS Test Series recommended'] },
+      { id:'sunReview', time:'13:00 – 14:00', type:'review', icon:'chart',
+        title:'Weekly Review', points:['Log weak topics into the Error Notebook','Plan focus areas for next week — rest of the day is yours'] }
+    ]
+  };
+}
+
+/* Tasks left incomplete on earlier days automatically resurface today — never deleted. */
+function getCarryoverTasks(dateStr){
+  const out = [];
+  const carryTypes = ['study','notes','mcq','mains','ca'];
+  let cur = addDays(parseISO(dateStr), -1);
+  let scanned = 0;
+  while(scanned < 60 && fmtISO(cur) >= START_DATE_STR){
+    const ds = fmtISO(cur);
+    const tl = getDayTimeline(ds);
+    if(tl){
+      const day = STATE.days[ds];
+      tl.blocks.forEach(b=>{
+        if(carryTypes.includes(b.type) && !(day && day.done && day.done[b.id])){
+          out.push({ originDate:ds, block:b });
+        }
+      });
+    }
+    cur = addDays(cur, -1);
+    scanned++;
+  }
+  return out;
+}
+
+
+/* Toggle a day's timeline block and cascade side-effects (chapter completion, revision scheduling, weak-topic checks, streak) */
+function toggleDayTask(dateStr, taskId){
+  const day = getDay(dateStr);
+  const wasDone = !!day.done[taskId];
+  day.done[taskId] = !wasDone;
+  if(taskId === 'study' && !wasDone){
+    const tl = getDayTimeline(dateStr);
+    const block = tl && tl.blocks.find(b=>b.id==='study');
+    if(block && block.subjectKey){
+      markChapterDone(block.subjectKey, block.chapterIndex, true);
+      const subjName = SUBJECTS[block.subjectKey] ? SUBJECTS[block.subjectKey].name : block.subjectKey;
+      scheduleRevision(block.subjectKey, subjName, block.title.split(': ').slice(1).join(': ') || block.title, dateStr);
+    }
+  }
+  updateStreak();
+  saveState();
+}
+function markChapterDone(subjectKey, chapterIndex, val){
+  const sp = getSubjectProgress(subjectKey);
+  sp.chapterDone[chapterIndex] = val;
+}
+function scheduleRevision(subjectKey, subjectName, chapter, originDate){
+  REVISION_OFFSETS.forEach(off=>{
+    const due = fmtISO(addDays(parseISO(originDate), off));
+    STATE.revisions.push({
+      id: 'rev_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+      subjectKey, subjectName, chapter, dueDate:due, done:false, originDate
+    });
+  });
+}
+/* Revisions due today or earlier (missed items auto-roll into "today") */
+function getDueRevisions(dateStr){
+  return STATE.revisions.filter(r => !r.done && r.dueDate <= dateStr);
+}
+function getUpcomingRevisions(dateStr, days){
+  const until = fmtISO(addDays(parseISO(dateStr), days));
+  return STATE.revisions.filter(r => !r.done && r.dueDate > dateStr && r.dueDate <= until);
+}
+
+/* ============================================================================
+   WEAK TOPICS ENGINE — auto-detects weak areas from MCQ / PYQ / mock performance
+   ============================================================================ */
+function addWeakTopic(subjectKey, topic, reason){
+  const subjectName = SUBJECTS[subjectKey] ? SUBJECTS[subjectKey].name : (subjectKey==='anthro_paper1'||subjectKey==='anthro_paper2' ? 'Anthropology' : (subjectKey||'General'));
+  const existing = STATE.weakTopics.find(w=>w.subjectKey===subjectKey && w.topic===topic && !w.resolved);
+  if(existing){ existing.reason = reason; existing.dateAdded = todayISO(); saveState(); return; }
+  STATE.weakTopics.push({ id:uid('weak'), subjectKey, subjectName, topic, reason, dateAdded:todayISO(), resolved:false });
+  REVISION_OFFSETS.slice(0,3).forEach(off=>{
+    const due = fmtISO(addDays(todayDate(), off));
+    STATE.revisions.push({ id:uid('rev'), subjectKey, subjectName, chapter:topic+' (weak topic)', dueDate:due, done:false, originDate:todayISO() });
+  });
+  showToast('⚠️ Added to Weak Topics — extra revision scheduled');
+  saveState();
+}
+function resolveWeakTopic(id){
+  const w = STATE.weakTopics.find(x=>x.id===id);
+  if(w){ w.resolved = true; saveState(); showToast('Marked as improved'); }
+}
+
+/* ============================================================================
+   MCQ PRACTICE LOG
+   ============================================================================ */
+function logMcqScore(dateStr, subjectKey, chapterTitle, correct, total){
+  const accuracy = total>0 ? Math.round(correct/total*100) : 0;
+  STATE.mcqLogs.push({ id:uid('mcq'), date:dateStr, subjectKey, chapterTitle, correct, total, accuracy });
+  if(accuracy < 70){ addWeakTopic(subjectKey, chapterTitle, `MCQ accuracy ${accuracy}% (below 70%)`); }
+  saveState();
+}
+function mcqLogsForDate(dateStr){ return STATE.mcqLogs.filter(m=>m.date===dateStr); }
+
+
+/* ---------- Streak ---------- */
+function dayHasActivity(dateStr){
+  const day = STATE.days[dateStr];
+  const habitDay = STATE.habits[dateStr];
+  const dayActive = day && (Object.values(day.done||{}).some(Boolean) || (day.studyMinutes||0) > 0);
+  const habitActive = habitDay && Object.values(habitDay).some(Boolean);
+  return !!(dayActive || habitActive);
+}
+function updateStreak(){
+  const t = todayDate();
+  let cur = 0;
+  let cursor = new Date(t);
+  while(dayHasActivity(fmtISO(cursor))){
+    cur++;
+    cursor = addDays(cursor, -1);
+  }
+  STATE.streak.current = cur;
+  if(cur > (STATE.streak.longest||0)) STATE.streak.longest = cur;
+  STATE.streak.lastActiveDate = todayISO();
+  checkBadges();
+}
+function checkBadges(){
+  const milestones = [3,7,14,30,50,100];
+  milestones.forEach(m=>{
+    const id = 'streak_'+m;
+    if(STATE.streak.current >= m && !STATE.badges.includes(id)){
+      STATE.badges.push(id);
+      showToast('🏅 Badge unlocked: '+m+'-day streak!');
+      fireConfetti();
+    }
+  });
+}
+
+/* ---------- Study minutes today ---------- */
+function addStudyMinutes(mins){
+  const day = getDay(todayISO());
+  day.studyMinutes = (day.studyMinutes||0) + mins;
+  STATE.timerLogs.push({date:todayISO(), minutes:mins, type:'session'});
+  updateStreak();
+  saveState();
+}
+function studyMinutesForDate(dateStr){
+  const day = STATE.days[dateStr];
+  return day ? (day.studyMinutes||0) : 0;
+}
+function studyMinutesRange(startStr, endStr){
+  let total = 0;
+  let d = parseISO(startStr);
+  const end = parseISO(endStr);
+  while(d <= end){
+    total += studyMinutesForDate(fmtISO(d));
+    d = addDays(d,1);
+  }
+  return total;
+}
+
+/* ============================================================================
+   UI HELPERS: toast, modal, navigation
+   ============================================================================ */
+let toastTimer = null;
+function showToast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove('show'), 2400);
+}
+
+function openModal(html){
+  document.getElementById('modalBody').innerHTML = '<div class="modal-handle"></div>' + html;
+  document.getElementById('modalBackdrop').classList.add('open');
+}
+function closeModal(){
+  document.getElementById('modalBackdrop').classList.remove('open');
+}
+document.getElementById('modalBackdrop').addEventListener('click', (e)=>{
+  if(e.target.id === 'modalBackdrop') closeModal();
+});
+
+let CURRENT_SCREEN = 'home';
+let CURRENT_SUBJECT = null;
+let PLANNER_SELECTED_DATE = todayISO();
+
+function navigate(screen, param){
+  CURRENT_SCREEN = screen;
+  if(screen === 'subjectDetail') CURRENT_SUBJECT = param;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const target = document.getElementById('screen-'+screen);
+  if(target) target.classList.add('active');
+  document.querySelectorAll('.navbtn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.screen === screen || (screen==='subjectDetail' && b.dataset.screen==='subjects') || (['currentaffairs','mocktests','revision','pyq','answerwriting','habits','timer','statistics','flashcards','settings','anthropology','errornotebook','weaktopics'].includes(screen) && b.dataset.screen==='more'));
+  });
+  window.scrollTo(0,0);
+  renderCurrentScreen(param);
+  document.getElementById('searchWrap').classList.remove('open');
+}
+function renderCurrentScreen(param){
+  const renderers = {
+    home: renderHome, today: renderToday, planner: renderPlanner, subjects: renderSubjects,
+    subjectDetail: ()=>renderSubjectDetail(param||CURRENT_SUBJECT), anthropology: renderAnthropology,
+    currentaffairs: renderCurrentAffairs, mocktests: renderMockTests, revision: renderRevision,
+    pyq: renderPYQ, answerwriting: renderAnswerWriting, habits: renderHabits, timer: renderTimer,
+    statistics: renderStatistics, flashcards: renderFlashcards, more: renderMore, settings: renderSettings,
+    errornotebook: renderErrorNotebook, weaktopics: renderWeakTopics
+  };
+  if(renderers[CURRENT_SCREEN]) renderers[CURRENT_SCREEN]();
+}
+
+document.querySelectorAll('.navbtn').forEach(btn=>{
+  btn.addEventListener('click', ()=>navigate(btn.dataset.screen));
+});
+document.getElementById('brandHome').addEventListener('click', ()=>navigate('home'));
+
+/* ---------- Confetti ---------- */
+function fireConfetti(){
+  const colors = ['#0D47A1','#1976D2','#2E7D32','#F9A825','#C62828'];
+  for(let i=0;i<40;i++){
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.left = Math.random()*100+'vw';
+    p.style.background = colors[i%colors.length];
+    p.style.borderRadius = Math.random()>0.5 ? '50%' : '2px';
+    p.style.transform = `rotate(${Math.random()*360}deg)`;
+    document.body.appendChild(p);
+    const duration = 1800 + Math.random()*1400;
+    const drift = (Math.random()-0.5)*160;
+    p.animate([
+      {transform:`translate(0,0) rotate(0deg)`, opacity:1},
+      {transform:`translate(${drift}px, 100vh) rotate(${360+Math.random()*360}deg)`, opacity:0.9}
+    ], {duration, easing:'cubic-bezier(.25,.46,.45,.94)'});
+    setTimeout(()=>p.remove(), duration+50);
+  }
+}
+
+/* ---------- Simple canvas charts (no external libs) ---------- */
+function drawBarChart(canvas, labels, values, color){
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio||1;
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  canvas.width = w*dpr; canvas.height = h*dpr;
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,w,h);
+  const max = Math.max(1, ...values);
+  const padBottom = 22, padTop = 10;
+  const barW = w/values.length;
+  const textColor = getComputedStyle(document.body).getPropertyValue('--text-faint').trim();
+  values.forEach((v,i)=>{
+    const bh = ((h-padBottom-padTop) * (v/max));
+    const x = i*barW + barW*0.22;
+    const bw = barW*0.56;
+    const y = h - padBottom - bh;
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.9;
+    roundRect(ctx, x, y, bw, bh, 4);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = textColor;
+    ctx.font = '10px Manrope, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(labels[i], x+bw/2, h-6);
+  });
+}
+function drawLineChart(canvas, labels, values, color){
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio||1;
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  canvas.width = w*dpr; canvas.height = h*dpr;
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,w,h);
+  const max = Math.max(1, ...values), min = Math.min(0, ...values);
+  const padB=20, padT=10, padL=6, padR=6;
+  const stepX = (w-padL-padR)/Math.max(1,values.length-1);
+  ctx.beginPath();
+  values.forEach((v,i)=>{
+    const x = padL + i*stepX;
+    const y = padT + (h-padT-padB) * (1 - (v-min)/((max-min)||1));
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle = color; ctx.lineWidth = 2.4; ctx.lineJoin='round'; ctx.stroke();
+  // fill
+  ctx.lineTo(padL+(values.length-1)*stepX, h-padB);
+  ctx.lineTo(padL, h-padB);
+  ctx.closePath();
+  ctx.fillStyle = color+'22';
+  ctx.fill();
+  const textColor = getComputedStyle(document.body).getPropertyValue('--text-faint').trim();
+  ctx.fillStyle = textColor; ctx.font='10px Manrope, sans-serif'; ctx.textAlign='center';
+  labels.forEach((l,i)=>{ if(i%Math.ceil(labels.length/6||1)===0) ctx.fillText(l, padL+i*stepX, h-4); });
+}
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+function uid(prefix){ return (prefix||'id')+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,7); }
+function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ============================================================================
+   SCREEN: HOME
+   ============================================================================ */
+/* ============================================================================
+   SCREEN: HOME — mentor dashboard
+   ============================================================================ */
+function renderHome(){
+  const el = document.getElementById('screen-home');
+  const dLeft = daysRemaining();
+  const tISO = todayISO();
+  const tl = getDayTimeline(tISO);
+  const day = getDay(tISO);
+  const togglableTypes = ['study','notes','mcq','ca','mains','anthro'];
+  const togglableBlocks = tl ? tl.blocks.filter(b=>togglableTypes.includes(b.type)) : [];
+  const doneTasks = togglableBlocks.filter(b=>day.done[b.id]).length;
+  const totalTasks = togglableBlocks.length;
+  const pct = totalTasks? Math.round(doneTasks/totalTasks*100) : 0;
+  const overallPct = overallCompletionPct();
+  const quote = QUOTES[dayIndexOf(tISO) % QUOTES.length];
+  const streak = STATE.streak.current||0;
+  const studyToday = Math.round((day.studyMinutes||0)/6)/10;
+  const weekMins = studyMinutesRange(fmtISO(addDays(todayDate(),-6)), tISO);
+  const monthMins = studyMinutesRange(fmtISO(addDays(todayDate(),-29)), tISO);
+  const nextMock = STATE.mockTests.filter(m=>m.date >= tISO).sort((a,b)=>a.date.localeCompare(b.date))[0];
+  const dueRevisions = getDueRevisions(tISO);
+  const ringR = 34, ringC = 2*Math.PI*ringR;
+  const examProgress = planProgressPct();
+  const subjectsCompleted = SUBJECT_KEYS.filter(k=>subjectCompletion(k).pct===100).length;
+  const mcqsToday = mcqLogsForDate(tISO).reduce((a,m)=>a+m.total,0);
+  const pyqsToday = STATE.pyq.filter(p=>p.dateAdded===tISO).length;
+  const mainsBlocks = tl ? tl.blocks.filter(b=>b.type==='mains') : [];
+  const mainsDue = mainsBlocks.filter(b=>!day.done[b.id]).length;
+  const caDue = tl ? tl.blocks.some(b=>b.type==='ca' && !day.done[b.id]) : false;
+  const weakest = weakestSubject();
+  const carryoverCount = getCarryoverTasks(tISO).length;
+
+  el.innerHTML = `
+    <div class="hero">
+      <div class="hero-top">
+        <div>
+          <div class="hero-date">${fmtHuman(tISO)}</div>
+          <div class="hero-quote">"${esc(quote)}"</div>
+        </div>
+        <div class="countdown-ring">
+          <svg width="84" height="84">
+            <circle cx="42" cy="42" r="${ringR}" stroke="rgba(255,255,255,0.25)" stroke-width="6" fill="none"/>
+            <circle cx="42" cy="42" r="${ringR}" stroke="#fff" stroke-width="6" fill="none"
+              stroke-dasharray="${ringC}" stroke-dashoffset="${ringC*(1-examProgress/100)}" stroke-linecap="round"/>
+          </svg>
+          <div class="cr-num"><b>${examProgress}%</b><small>ELAPSED</small></div>
+        </div>
+      </div>
+      <div class="hero-days">${dLeft}<span> days to Prelims</span></div>
+      <div class="hero-progress">
+        <div class="hero-progress-bar"><div style="width:${examProgress}%"></div></div>
+        <div class="hero-progress-label"><span>${PROFILE.examLabel}</span><span>Prelims · 24 May 2027</span></div>
+      </div>
+    </div>
+
+    <div class="quickgrid">
+      ${quickBtn('book','Study', 'var(--primary)', "navigate('today')")}
+      ${quickBtn('repeat','Revise', 'var(--success)', "navigate('revision')")}
+      ${quickBtn('target','MCQs', 'var(--accent)', "navigate('today')")}
+      ${quickBtn('trophy','Mock', 'var(--warning)', "navigate('mocktests')")}
+      ${quickBtn('news','Affairs', 'var(--danger)', "navigate('currentaffairs')")}
+    </div>
+
+    <div class="section-title">Today's targets <span class="tag">${doneTasks}/${totalTasks} done</span></div>
+    <div class="grid-2">
+      <div class="stat-card"><div class="stat-icon" style="color:var(--primary)">${icon('flame',18)}</div><div class="stat-val">${streak}</div><div class="stat-label">Study streak</div></div>
+      <div class="stat-card"><div class="stat-icon" style="color:var(--accent)">${icon('clock',18)}</div><div class="stat-val">${studyToday}h</div><div class="stat-label">Study today</div></div>
+      <div class="stat-card"><div class="stat-icon" style="color:var(--success)">${icon('check',18)}</div><div class="stat-val">${pct}%</div><div class="stat-label">Today's plan</div></div>
+      <div class="stat-card"><div class="stat-icon" style="color:var(--warning)">${icon('chart',18)}</div><div class="stat-val">${overallPct}%</div><div class="stat-label">Overall progress</div></div>
+    </div>
+    <div class="grid-3" style="margin-top:10px">
+      <div class="stat-card"><div class="stat-val" style="font-size:1.1rem">${subjectsCompleted}/${SUBJECT_KEYS.length}</div><div class="stat-label">Subjects done</div></div>
+      <div class="stat-card"><div class="stat-val" style="font-size:1.1rem">${dueRevisions.length}</div><div class="stat-label">Revision due</div></div>
+      <div class="stat-card"><div class="stat-val" style="font-size:1.1rem">${mcqsToday}</div><div class="stat-label">MCQs today</div></div>
+      <div class="stat-card"><div class="stat-val" style="font-size:1.1rem">${pyqsToday}</div><div class="stat-label">PYQs today</div></div>
+      <div class="stat-card"><div class="stat-val" style="font-size:1.1rem;color:${mainsDue>0?'var(--danger)':'var(--success)'}">${mainsDue>0?mainsDue+' due':'Clear'}</div><div class="stat-label">Mains answer</div></div>
+      <div class="stat-card"><div class="stat-val" style="font-size:1.1rem;color:${caDue?'var(--danger)':'var(--success)'}">${caDue?'Due':'Done'}</div><div class="stat-label">Current affairs</div></div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="row-between"><b style="font-size:0.85rem">Weekly progress</b><span class="muted">${(weekMins/60).toFixed(1)}h this week</span></div>
+      <div class="pbar" style="margin-top:8px"><div style="width:${Math.min(100,weekMins/(7*4*60)*100)}%"></div></div>
+      <div class="row-between" style="margin-top:14px"><b style="font-size:0.85rem">Monthly progress</b><span class="muted">${(monthMins/60).toFixed(1)}h this month</span></div>
+      <div class="pbar" style="margin-top:8px"><div style="width:${Math.min(100,monthMins/(30*4*60)*100)}%;background:var(--success)"></div></div>
+    </div>
+
+    ${carryoverCount?`<div class="card" style="margin-top:12px;border-left:3px solid var(--warning)"><div class="row-between"><b style="font-size:0.85rem">⏳ Carried-over tasks</b><span class="pill" style="background:rgba(249,168,37,.18);color:#946200">${carryoverCount}</span></div><div class="muted" style="margin-top:4px">Nothing was deleted — open Today to clear them.</div></div>`:''}
+
+    <div class="section-title">Today's timetable <span class="tag">${tl?tl.monthLabel:''}</span></div>
+    <div class="card">
+      ${tl ? tl.blocks.slice(0,6).map(b=>`
+        <div class="task-row">
+          <div class="tl-dot" style="background:${BLOCK_COLORS[b.type]||'var(--accent)'};width:26px;height:26px;flex-shrink:0">${icon(b.icon,12)}</div>
+          <div class="task-main"><div class="task-title" style="font-size:0.82rem">${esc(b.time)} — ${esc(b.title)}</div></div>
+        </div>`).join('') : `<div class="empty-state"><p>Outside plan range.</p></div>`}
+      <button class="btn btn-outline btn-block" style="margin-top:12px" onclick="navigate('today')">Open full timeline ${icon('arrowRight',14)}</button>
+    </div>
+
+    <div class="section-title">Upcoming</div>
+    <div class="grid-2">
+      <div class="card" style="padding:14px">
+        <div class="muted">Upcoming mock</div>
+        <div style="font-weight:700;margin-top:4px;font-size:0.88rem">${nextMock? esc(nextMock.type)+' — '+fmtShort(nextMock.date) : 'None scheduled'}</div>
+        <button class="btn btn-sm btn-accent" style="margin-top:8px" onclick="navigate('mocktests')">${nextMock?'View':'Schedule'}</button>
+      </div>
+      <div class="card" style="padding:14px">
+        <div class="muted">Weakest subject</div>
+        <div style="font-weight:700;margin-top:4px;font-size:0.88rem">${weakest?esc(weakest):'None flagged yet'}</div>
+        <button class="btn btn-sm btn-outline" style="margin-top:8px" onclick="navigate('weaktopics')">Weak Topics</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px;text-align:center">
+      <div class="muted" style="margin-bottom:4px">💡 Random UPSC fact</div>
+      <div style="font-size:0.85rem;font-weight:600">${esc(UPSC_FACTS[dayIndexOf(tISO)%UPSC_FACTS.length])}</div>
+    </div>
+  `;
+}
+function quickBtn(iconName,label,color,onclick){
+  return `<div class="qbtn" onclick="${onclick}"><div class="qicon" style="background:${color}1a;color:${color}">${icon(iconName,17)}</div><span>${label}</span></div>`;
+}
+function completeRevision(id){
+  const r = STATE.revisions.find(x=>x.id===id);
+  if(r){ r.done = true; updateStreak(); saveState(); showToast('Revision marked complete'); }
+}
+function overallCompletionPct(){
+  let doneCh = 0, totalCh = 0;
+  SUBJECT_KEYS.forEach(k=>{
+    const sp = getSubjectProgress(k);
+    totalCh += SUBJECTS[k].chapters.length;
+    doneCh += (sp.chapterDone||[]).filter(Boolean).length;
+  });
+  const ap1 = STATE.anthroProgress.paper1, ap2 = STATE.anthroProgress.paper2;
+  totalCh += ANTHRO.paper1.chapters.length + ANTHRO.paper2.chapters.length;
+  doneCh += (ap1.chapterDone||[]).filter(Boolean).length + (ap2.chapterDone||[]).filter(Boolean).length;
+  return totalCh? Math.round(doneCh/totalCh*100) : 0;
+}
+/* Weakest subject: most unresolved Weak Topics entries, falls back to lowest completion% among started subjects */
+function weakestSubject(){
+  const open = STATE.weakTopics.filter(w=>!w.resolved);
+  if(open.length){
+    const counts = {};
+    open.forEach(w=>{ counts[w.subjectName] = (counts[w.subjectName]||0)+1; });
+    return Object.entries(counts).sort((a,b)=>b[1]-a[1])[0][0];
+  }
+  let worst = null, worstPct = 101;
+  SUBJECT_KEYS.forEach(k=>{
+    const c = subjectCompletion(k);
+    if(c.done>0 && c.pct < worstPct){ worstPct = c.pct; worst = SUBJECTS[k].name; }
+  });
+  return worst;
+}
+
+/* ============================================================================
+   SCREEN: TODAY'S PLAN — one continuous mentor timeline (study → notes →
+   MCQs → revision → current affairs → gym → mains → reflection)
+   ============================================================================ */
+function renderToday(){
+  renderDayDetail(document.getElementById('screen-today'), todayISO(), true);
+}
+const BLOCK_COLORS = {
+  study:'#0D47A1', notes:'#1976D2', mcq:'#F9A825', revision:'#2E7D32',
+  ca:'#C62828', gym:'#AD1457', mains:'#6A1B9A', anthro:'#00695C', reflection:'#455A64', review:'#37474F'
+};
+function renderDayDetail(el, dateStr, isToday){
+  const tl = getDayTimeline(dateStr);
+  const day = getDay(dateStr);
+  if(!tl){
+    el.innerHTML = `<div class="screen-header"><h2>${isToday?"Today's Plan":fmtShort(dateStr)}</h2></div>
+      <div class="empty-state">${icon('calendar',34)}<p>${fmtHuman(dateStr)} is outside the 15 Jul 2026 – 24 May 2027 plan window.</p></div>`;
+    return;
+  }
+  const togglableTypes = ['study','notes','mcq','ca','mains','anthro'];
+  const togglableBlocks = tl.blocks.filter(b=>togglableTypes.includes(b.type));
+  const doneCount = togglableBlocks.filter(b=>day.done[b.id]).length;
+  const pct = togglableBlocks.length ? Math.round(doneCount/togglableBlocks.length*100) : 0;
+  const dueRevisions = STATE.revisions.filter(r=>!r.done && r.dueDate<=dateStr);
+  const carryover = isToday ? getCarryoverTasks(dateStr) : [];
+  const screenId = isToday ? 'today' : 'planner';
+  const wrapSel = isToday ? `document.getElementById('screen-today')` : `document.getElementById('plannerDayDetail')`;
+
+  el.innerHTML = `
+    <div class="screen-header row-between">
+      <div><h2>${isToday? "Today's Plan":fmtShort(dateStr)}</h2><p>${fmtHuman(dateStr)} · Day ${tl.dayIndex+1} of ${TOTAL_DAYS} · ${tl.monthLabel}</p></div>
+    </div>
+    <div class="card" style="background:linear-gradient(160deg,var(--primary),var(--accent));border:none">
+      <div class="row-between" style="color:#fff"><b style="font-size:0.85rem">${esc(tl.focusLabel)}</b><span style="font-size:0.78rem;opacity:.85">${doneCount}/${togglableBlocks.length}</span></div>
+      <div class="hero-progress-bar" style="margin-top:8px"><div style="width:${pct}%"></div></div>
+    </div>
+
+    ${carryover.length?`
+    <div class="section-title">Carried over <span class="tag">${carryover.length} pending</span></div>
+    <div class="card" style="border-left:3px solid var(--warning)">
+      ${carryover.slice(0,8).map(c=>`
+        <div class="task-row">
+          <div class="chk ${false?'done':''}" onclick="toggleDayTask('${c.originDate}','${c.block.id}');renderDayDetail(${wrapSel},'${dateStr}',${isToday})">${icon('check',13)}</div>
+          <div class="task-main"><div class="task-title">${esc(c.block.title)}</div>
+          <div class="task-sub">From ${fmtShort(c.originDate)} · ${esc(c.block.time)} · never deleted, just carried forward</div></div>
+        </div>`).join('')}
+      ${carryover.length>8?`<div class="muted" style="padding:6px 4px">+ ${carryover.length-8} more earlier tasks pending</div>`:''}
+    </div>`:''}
+
+    <div class="section-title">Integrated timeline</div>
+    <div class="timeline">
+      ${tl.blocks.map(b=>renderTimelineBlock(b, dateStr, day, wrapSel, isToday)).join('')}
+    </div>
+
+    ${dueRevisions.length?`
+    <div class="section-title">Revision queue <span class="tag">${dueRevisions.length} due</span></div>
+    <div class="card">
+      ${dueRevisions.slice(0,10).map(r=>`<div class="task-row"><div class="chk" onclick="completeRevision('${r.id}');renderDayDetail(${wrapSel},'${dateStr}',${isToday})">${icon('check',13)}</div>
+      <div class="task-main"><div class="task-title">${esc(r.subjectName)}: ${esc(r.chapter)}</div><div class="task-sub">${r.dueDate<dateStr?'Missed — auto-moved to today':'Scheduled today'}</div></div></div>`).join('')}
+      ${dueRevisions.length>10?`<div class="muted" style="padding:6px 4px">+ ${dueRevisions.length-10} more</div>`:''}
+    </div>`:''}
+
+    <div class="section-title">Study timer</div>
+    <div class="card row-between">
+      <div><div class="stat-val" style="font-size:1.3rem">${(studyMinutesForDate(dateStr)/60).toFixed(1)}h</div><div class="stat-label">logged today</div></div>
+      <button class="btn btn-primary" onclick="navigate('timer')">${icon('timer',15)} Start session</button>
+    </div>
+    <div class="section-title">Daily notes</div>
+    <div class="card">
+      <textarea id="dayNotesInput" placeholder="Jot down what you learned, doubts to clear, or reflections for the day…">${esc(day.notes||'')}</textarea>
+      <button class="btn btn-accent btn-sm" style="margin-top:10px" onclick="saveDayNotes('${dateStr}')">Save notes</button>
+    </div>
+  `;
+}
+/* Renders a single timeline block (vertical rail + connecting line + content card) */
+function renderTimelineBlock(b, dateStr, day, wrapSel, isToday){
+  const togglableTypes = ['study','notes','mcq','ca','mains','anthro'];
+  const isTogglable = togglableTypes.includes(b.type);
+  const isDone = isTogglable && !!day.done[b.id];
+  const color = BLOCK_COLORS[b.type] || 'var(--accent)';
+  let extra = '';
+  if(b.type==='mcq'){
+    const logs = STATE.mcqLogs.filter(m=>m.date===dateStr && m.subjectKey===b.subjectKey);
+    extra = `<button class="btn btn-sm btn-outline" style="margin-top:8px" onclick="openLogMcq('${dateStr}','${b.subjectKey||''}','${esc(b.chapterTitle||'').replace(/'/g,"\\'")}')">${icon('target',13)} Log MCQ score</button>
+      ${logs.length?`<div class="muted" style="margin-top:6px">Logged: ${logs.map(l=>l.correct+'/'+l.total+' ('+l.accuracy+'%)').join(', ')}</div>`:''}`;
+  }
+  if(b.type==='revision'){
+    extra = `<div class="muted" style="margin-top:4px">See "Revision queue" below for today's due items.</div>`;
+  }
+  if(b.type==='review'){
+    extra = `<div style="display:flex;gap:8px;margin-top:8px"><button class="btn btn-sm btn-outline" onclick="navigate('statistics')">Open Statistics</button><button class="btn btn-sm btn-outline" onclick="navigate('weaktopics')">Weak Topics</button></div>`;
+  }
+  if(b.type==='mains'){
+    const logged = STATE.answerWriting.filter(a=>a.date===dateStr && a.marks===b.marks);
+    extra = `<button class="btn btn-sm btn-outline" style="margin-top:8px" onclick="openAddAnswer(${b.marks},'${dateStr}')">${icon('pen',13)} Write &amp; log answer</button>
+      ${logged.length?`<div class="muted" style="margin-top:6px">${logged.length} answer(s) logged today at ${b.marks} marks</div>`:''}`;
+  }
+  return `
+    <div class="tl-item">
+      <div class="tl-rail">
+        <div class="tl-dot" style="background:${color}">${icon(b.icon,13)}</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-content">
+        <div class="tl-time">${esc(b.time)}</div>
+        <div class="card" style="margin-top:4px;${isDone?'opacity:.72':''}">
+          <div style="display:flex;gap:10px;align-items:flex-start">
+            ${isTogglable?`<div class="chk ${isDone?'done':''}" onclick="toggleDayTask('${dateStr}','${b.id}');renderDayDetail(${wrapSel},'${dateStr}',${isToday})">${icon('check',13)}</div>`:''}
+            <div style="flex:1;min-width:0">
+              <div class="task-title ${isDone?'strike':''}">${esc(b.title)}</div>
+              ${b.target?`<div class="pill" style="margin-top:6px;background:rgba(13,71,161,.1);color:var(--primary)">${icon('target',10)} ${esc(b.target)}</div>`:''}
+              ${b.book?`<div class="task-sub" style="margin-top:6px">📘 ${esc(b.book)}</div>`:''}
+              ${b.points&&b.points.length?`<ul style="margin:8px 0 0;padding-left:18px">${b.points.map(p=>`<li class="task-sub" style="margin-bottom:3px">${esc(p)}</li>`).join('')}</ul>`:''}
+              ${extra}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+function saveDayNotes(dateStr){
+  const val = document.getElementById('dayNotesInput').value;
+  getDay(dateStr).notes = val;
+  saveState();
+  showToast('Notes saved');
+}
+function openLogMcq(dateStr, subjectKey, chapterTitle){
+  openModal(`
+    <div class="modal-head"><h3>Log MCQ score</h3><button class="topbar-btn" onclick="closeModal()">${icon('close',18)}</button></div>
+    <p class="muted" style="margin-bottom:10px">${esc(chapterTitle)}</p>
+    <div class="field-row">
+      <div class="field"><label>Correct</label><input type="number" id="mcqCorrect" value="0" min="0"></div>
+      <div class="field"><label>Total attempted</label><input type="number" id="mcqTotal" value="20" min="1"></div>
+    </div>
+    <p class="muted">Accuracy below 70% automatically adds this topic to Weak Topics with extra revision.</p>
+    <button class="btn btn-primary btn-block" onclick="submitMcqLog('${dateStr}','${subjectKey}','${chapterTitle.replace(/'/g,"\\'")}')">Save score</button>
+  `);
+}
+function submitMcqLog(dateStr, subjectKey, chapterTitle){
+  const correct = +document.getElementById('mcqCorrect').value||0;
+  const total = +document.getElementById('mcqTotal').value||1;
+  logMcqScore(dateStr, subjectKey, chapterTitle, correct, total);
+  closeModal();
+  showToast('MCQ score logged');
+  renderCurrentScreen();
+}
+
+
+
+/* ============================================================================
+   SCREEN: PLANNER (calendar month view -> day detail)
+   ============================================================================ */
+let PLANNER_MONTH = todayDate().getFullYear()*12 + todayDate().getMonth();
+function renderPlanner(){
+  const el = document.getElementById('screen-planner');
+  const year = Math.floor(PLANNER_MONTH/12), month = PLANNER_MONTH%12;
+  const first = new Date(year, month, 1);
+  const startOffset = first.getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const tISO = todayISO();
+  let cells = '';
+  for(let i=0;i<startOffset;i++) cells += `<div class="cal-cell out"></div>`;
+  for(let d=1; d<=daysInMonth; d++){
+    const ds = fmtISO(new Date(year,month,d));
+    const inPlan = isWithinPlan(ds);
+    const day = STATE.days[ds];
+    const hasProgress = day && Object.values(day.done||{}).some(Boolean);
+    const isToday = ds === tISO;
+    const isExam = ds === EXAM_DATE_STR;
+    cells += `<div class="cal-cell ${isToday?'today':''} ${ds===PLANNER_SELECTED_DATE?'selected':''} ${isExam?'exam':''} ${!inPlan&&!isExam?'out':''}"
+      onclick="PLANNER_SELECTED_DATE='${ds}';renderPlanner()">
+      ${d}${hasProgress?`<div class="dot-row"><div class="d"></div></div>`:''}
+      </div>`;
+  }
+  el.innerHTML = `
+    <div class="screen-header"><h2>Planner</h2><p>Full auto-generated schedule, 15 Jul 2026 → 24 May 2027</p></div>
+    <div class="card">
+      <div class="cal-head">
+        <button class="topbar-btn" onclick="PLANNER_MONTH--;renderPlanner()">${icon('arrowLeft',16)}</button>
+        <h3>${MONTHS[month]} ${year}</h3>
+        <button class="topbar-btn" onclick="PLANNER_MONTH++;renderPlanner()">${icon('arrowRight',16)}</button>
+      </div>
+      <div class="cal-grid">
+        ${DOW.map(d=>`<div class="cal-dow">${d}</div>`).join('')}
+        ${cells}
+      </div>
+    </div>
+    <div id="plannerDayDetail" style="margin-top:6px"></div>
+  `;
+  renderDayDetail(document.getElementById('plannerDayDetail'), PLANNER_SELECTED_DATE, PLANNER_SELECTED_DATE===tISO);
+}
+
+/* ============================================================================
+   SCREEN: SUBJECTS (list + detail)
+   ============================================================================ */
+function subjectCompletion(key){
+  const sp = getSubjectProgress(key);
+  const total = SUBJECTS[key].chapters.length;
+  const done = (sp.chapterDone||[]).filter(Boolean).length;
+  return {done, total, pct: total? Math.round(done/total*100):0};
+}
+function renderSubjects(){
+  const el = document.getElementById('screen-subjects');
+  const tiers = [['high','High Priority'],['medium','Medium Priority'],['low','Lower Priority']];
+  el.innerHTML = `
+    <div class="screen-header"><h2>Subjects</h2><p>GS syllabus distributed by UPSC weightage · Economy gets +25% time</p></div>
+    ${tiers.map(([tierKey,label])=>`
+      <div class="section-title">${label}</div>
+      <div class="card" style="padding:6px 12px">
+        ${SUBJECT_KEYS.filter(k=>SUBJECTS[k].tier===tierKey).map(k=>{
+          const c = subjectCompletion(k);
+          return `<div class="list-item" onclick="navigate('subjectDetail','${k}')">
+            <div class="subject-icon" style="background:${SUBJECTS[k].color}">${SUBJECTS[k].name.slice(0,2).toUpperCase()}</div>
+            <div class="list-item-body">
+              <div class="list-item-title">${SUBJECTS[k].name}${k==='economy'?' <span class=\"pill\" style=\"background:rgba(249,168,37,.18);color:#946200\">+25% time</span>':''}</div>
+              <div class="list-item-sub">${c.done}/${c.total} chapters</div>
+              <div class="pbar thin" style="margin-top:6px;width:100%"><div style="width:${c.pct}%"></div></div>
+            </div>
+            <div class="chev">${icon('arrowRight',16)}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    `).join('')}
+  `;
+}
+
+function renderSubjectDetail(key){
+  const el = document.getElementById('screen-subjectDetail');
+  if(!key || !SUBJECTS[key]){ navigate('subjects'); return; }
+  const subj = SUBJECTS[key];
+  const sp = getSubjectProgress(key);
+  const c = subjectCompletion(key);
+  const dueRev = STATE.revisions.filter(r=>!r.done && r.subjectKey===key && r.dueDate<=todayISO());
+  const mcqLogs = STATE.mcqLogs.filter(m=>m.subjectKey===key).slice(-6).reverse();
+  el.innerHTML = `
+    <div class="screen-header">
+      <button class="btn btn-ghost btn-sm" onclick="navigate('subjects')">${icon('arrowLeft',14)} Subjects</button>
+      <h2 style="margin-top:10px">${subj.name}</h2>
+      <p>${esc(bookFor(key))}</p>
+    </div>
+    <div class="card">
+      <div class="row-between"><b style="font-size:0.85rem">Completion</b><span class="muted">${c.done}/${c.total} chapters (${c.pct}%)</span></div>
+      <div class="pbar" style="margin-top:8px"><div style="width:${c.pct}%;background:${subj.color}"></div></div>
+      <div class="row-between" style="margin-top:12px"><b style="font-size:0.85rem">Revision status</b><span class="pill ${dueRev.length?'tier-high':'tier-low'} dot">${dueRev.length?dueRev.length+' due now':'up to date'}</span></div>
+    </div>
+
+    <div class="section-title">Chapters <span class="tag">${subj.tier} priority</span></div>
+    <div class="card">
+      ${subj.chapters.map((ch,i)=>`
+        <div class="task-row">
+          <div class="chk ${sp.chapterDone[i]?'done':''}" onclick="toggleSubjectChapter('${key}',${i})">${icon('check',13)}</div>
+          <div class="task-main"><div class="task-title ${sp.chapterDone[i]?'strike':''}">${esc(ch)}</div></div>
+        </div>`).join('')}
+    </div>
+
+    <div class="section-title">Weak / strong areas</div>
+    <div class="card">
+      <div class="muted" style="margin-bottom:6px">Weak areas</div>
+      <div>${(sp.weak||[]).map((w,i)=>`<span class="tag-chip weak">${esc(w)}<button onclick="removeTag('${key}','weak',${i})">${icon('close',10)}</button></span>`).join('')}</div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <input id="weakInput-${key}" placeholder="Add weak topic" style="flex:1;padding:8px 10px;border-radius:9px;border:1.4px solid var(--border);background:var(--bg);color:var(--text)">
+        <button class="btn btn-sm btn-danger" onclick="addTag('${key}','weak')">Add</button>
+      </div>
+      <div class="divider"></div>
+      <div class="muted" style="margin-bottom:6px">Strong areas</div>
+      <div>${(sp.strong||[]).map((w,i)=>`<span class="tag-chip strong">${esc(w)}<button onclick="removeTag('${key}','strong',${i})">${icon('close',10)}</button></span>`).join('')}</div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <input id="strongInput-${key}" placeholder="Add strong topic" style="flex:1;padding:8px 10px;border-radius:9px;border:1.4px solid var(--border);background:var(--bg);color:var(--text)">
+        <button class="btn btn-sm btn-success" onclick="addTag('${key}','strong')">Add</button>
+      </div>
+    </div>
+
+    <div class="section-title">Notes</div>
+    <div class="card">
+      <textarea id="subjNotes-${key}" placeholder="Key points, mnemonics, doubts…">${esc(sp.notes||'')}</textarea>
+      <button class="btn btn-accent btn-sm" style="margin-top:10px" onclick="saveSubjectNotes('${key}')">Save notes</button>
+    </div>
+
+    <div class="section-title">Important MCQs</div>
+    <div class="card">
+      ${mcqLogs.length? mcqLogs.map(m=>`
+        <div class="list-item"><div class="list-item-body"><div class="list-item-title">${esc(m.chapterTitle)}</div>
+        <div class="list-item-sub">${m.correct}/${m.total} correct · ${m.accuracy}% · ${fmtShort(m.date)}</div></div></div>`).join('')
+      : `<div class="empty-state" style="padding:16px"><p>Log MCQ scores from Today's timeline to build this history.</p></div>`}
+    </div>
+
+    <div class="section-title">Important PYQs</div>
+    <div class="card">
+      ${STATE.pyq.filter(p=>p.subject===subj.name).length ? STATE.pyq.filter(p=>p.subject===subj.name).slice(0,5).map(p=>`
+        <div class="list-item"><div class="list-item-body"><div class="list-item-title">${p.year} · ${esc(p.topic)}</div>
+        <div class="list-item-sub">${p.correctPct}% correct · ${esc(p.difficulty)}</div></div></div>`).join('')
+        : `<div class="empty-state" style="padding:16px"><p>No PYQs logged for this subject yet.</p></div>`}
+      <button class="btn btn-outline btn-block" style="margin-top:8px" onclick="navigate('pyq')">Open PYQ Tracker</button>
+    </div>
+  `;
+}
+function toggleSubjectChapter(key,i){
+  const sp = getSubjectProgress(key);
+  const wasDone = !!sp.chapterDone[i];
+  sp.chapterDone[i] = !wasDone;
+  if(!wasDone){ scheduleRevision(key, SUBJECTS[key].name, SUBJECTS[key].chapters[i], todayISO()); showToast('Chapter marked complete · revision scheduled'); }
+  updateStreak(); saveState(); renderSubjectDetail(key);
+}
+function addTag(key, type){
+  const input = document.getElementById(`${type}Input-${key}`);
+  const val = input.value.trim();
+  if(!val) return;
+  const sp = getSubjectProgress(key);
+  sp[type] = sp[type]||[];
+  sp[type].push(val);
+  input.value='';
+  saveState(); renderSubjectDetail(key);
+}
+function removeTag(key,type,i){
+  const sp = getSubjectProgress(key);
+  sp[type].splice(i,1);
+  saveState(); renderSubjectDetail(key);
+}
+function saveSubjectNotes(key){
+  const sp = getSubjectProgress(key);
+  sp.notes = document.getElementById(`subjNotes-${key}`).value;
+  saveState(); showToast('Notes saved');
+}
+
+/* ============================================================================
+   SCREEN: ANTHROPOLOGY (optional subject)
+   ============================================================================ */
+let ANTHRO_TAB = 'paper1';
+function renderAnthropology(){
+  const el = document.getElementById('screen-anthropology');
+  const p = ANTHRO[ANTHRO_TAB];
+  const prog = STATE.anthroProgress[ANTHRO_TAB];
+  const done = (prog.chapterDone||[]).filter(Boolean).length;
+  const pct = Math.round(done/p.chapters.length*100);
+  const revItems = STATE.revisions.filter(r=>r.subjectKey==='anthro_'+ANTHRO_TAB);
+  const pyqItems = STATE.pyq.filter(p2=>p2.subject==='Anthropology');
+  const awItems = STATE.answerWriting.filter(a=>(a.question||'').toLowerCase().includes('anthro'));
+  el.innerHTML = `
+    <div class="screen-header"><h2>Anthropology (Optional)</h2><p>Separate track from GS · Papers I & II</p></div>
+    <div class="tabbar">
+      <div class="tabchip ${ANTHRO_TAB==='paper1'?'active':''}" onclick="ANTHRO_TAB='paper1';renderAnthropology()">Paper I</div>
+      <div class="tabchip ${ANTHRO_TAB==='paper2'?'active':''}" onclick="ANTHRO_TAB='paper2';renderAnthropology()">Paper II</div>
+    </div>
+    <div class="card">
+      <div class="row-between"><b style="font-size:0.85rem">${p.name}</b><span class="muted">${done}/${p.chapters.length}</span></div>
+      <div class="pbar" style="margin-top:8px"><div style="width:${pct}%;background:#6A1B9A"></div></div>
+    </div>
+    <div class="section-title">Topic-wise planner</div>
+    <div class="card">
+      ${p.chapters.map((ch,i)=>`
+        <div class="task-row">
+          <div class="chk ${prog.chapterDone[i]?'done':''}" onclick="toggleAnthroChapter(${i})">${icon('check',13)}</div>
+          <div class="task-main"><div class="task-title ${prog.chapterDone[i]?'strike':''}">${esc(ch)}</div></div>
+        </div>`).join('')}
+    </div>
+    <div class="section-title">Revision tracker <span class="tag">${revItems.filter(r=>!r.done).length} pending</span></div>
+    <div class="card">
+      ${revItems.length? revItems.slice(0,6).map(r=>`
+        <div class="task-row"><div class="chk ${r.done?'done':''}" onclick="completeRevision('${r.id}');renderAnthropology()">${icon('check',13)}</div>
+        <div class="task-main"><div class="task-title ${r.done?'strike':''}">${esc(r.chapter)}</div><div class="task-sub">Due ${fmtShort(r.dueDate)}</div></div></div>`).join('')
+        : `<div class="empty-state" style="padding:14px"><p>Complete topics above to auto-schedule spaced revisions.</p></div>`}
+    </div>
+    <div class="section-title">PYQ tracker</div>
+    <div class="card">
+      ${pyqItems.length? pyqItems.slice(0,5).map(p2=>`<div class="list-item"><div class="list-item-body"><div class="list-item-title">${p2.year} · ${esc(p2.topic)}</div><div class="list-item-sub">${p2.correctPct}% correct</div></div></div>`).join('')
+      : `<div class="empty-state" style="padding:14px"><p>No Anthropology PYQs logged yet.</p></div>`}
+      <button class="btn btn-outline btn-block" style="margin-top:8px" onclick="openAddPYQ('Anthropology')">Add Anthropology PYQ</button>
+    </div>
+    <div class="section-title">Answer writing tracker</div>
+    <div class="card">
+      ${awItems.length? awItems.slice(0,4).map(a=>`<div class="list-item"><div class="list-item-body"><div class="list-item-title">${esc(a.question)}</div><div class="list-item-sub">${a.wordCount} words · ${a.timeMinutes} min</div></div></div>`).join('')
+      : `<div class="empty-state" style="padding:14px"><p>No anthropology answers logged yet.</p></div>`}
+      <button class="btn btn-outline btn-block" style="margin-top:8px" onclick="navigate('answerwriting')">Open Answer Writing</button>
+    </div>
+  `;
+}
+function toggleAnthroChapter(i){
+  const prog = STATE.anthroProgress[ANTHRO_TAB];
+  const wasDone = !!prog.chapterDone[i];
+  prog.chapterDone[i] = !wasDone;
+  if(!wasDone){
+    const chapter = ANTHRO[ANTHRO_TAB].chapters[i];
+    REVISION_OFFSETS.forEach(off=>{
+      const due = fmtISO(addDays(todayDate(), off));
+      STATE.revisions.push({id:uid('rev'), subjectKey:'anthro_'+ANTHRO_TAB, subjectName:'Anthropology', chapter, dueDate:due, done:false, originDate:todayISO()});
+    });
+    showToast('Topic complete · revision scheduled');
+  }
+  updateStreak(); saveState(); renderAnthropology();
+}
+
+/* ============================================================================
+   SCREEN: CURRENT AFFAIRS
+   ============================================================================ */
+let CA_FILTER = 'All';
+let CA_VIEW = 'daily'; // daily | monthly | yearly | bookmarks | magazine
+let CA_SEARCH = '';
+function renderCurrentAffairs(){
+  const el = document.getElementById('screen-currentaffairs');
+  const tISO = todayISO();
+  let items = STATE.currentAffairs.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  if(CA_VIEW==='bookmarks') items = items.filter(i=>i.bookmarked);
+  if(CA_VIEW==='monthly') items = items.filter(i=>i.date.slice(0,7)===tISO.slice(0,7));
+  if(CA_FILTER!=='All') items = items.filter(i=>i.category===CA_FILTER);
+  if(CA_SEARCH) items = items.filter(i=>(i.title+' '+i.notes).toLowerCase().includes(CA_SEARCH.toLowerCase()));
+
+  if(CA_VIEW==='magazine'){
+    const monthKeys = Object.keys(MONTHS_CONFIG);
+    el.innerHTML = `
+      <div class="screen-header row-between">
+        <div><h2>Current Affairs</h2><p>Monthly magazine / compilation tracker</p></div>
+        <button class="btn btn-primary btn-sm" onclick="openAddCA()">${icon('plus',14)} Add</button>
+      </div>
+      <div class="tabbar">
+        ${['daily','monthly','yearly','bookmarks','magazine'].map(v=>`<div class="tabchip ${CA_VIEW===v?'active':''}" onclick="CA_VIEW='${v}';renderCurrentAffairs()">${v[0].toUpperCase()+v.slice(1)}</div>`).join('')}
+      </div>
+      <div class="card">
+        ${monthKeys.map(mk=>`
+          <div class="task-row">
+            <div class="chk ${STATE.caMagazines[mk]?'done':''}" onclick="toggleCaMagazine('${mk}')">${icon('check',13)}</div>
+            <div class="task-main"><div class="task-title ${STATE.caMagazines[mk]?'strike':''}">${esc(MONTHS_CONFIG[mk].label)} — compilation revised</div></div>
+          </div>`).join('')}
+      </div>
+    `;
+    return;
+  }
+
+  el.innerHTML = `
+    <div class="screen-header row-between">
+      <div><h2>Current Affairs</h2><p>${STATE.currentAffairs.length} entries logged</p></div>
+      <button class="btn btn-primary btn-sm" onclick="openAddCA()">${icon('plus',14)} Add</button>
+    </div>
+    <input class="search-input" style="margin-bottom:12px" placeholder="Search current affairs…" value="${esc(CA_SEARCH)}" oninput="CA_SEARCH=this.value;renderCurrentAffairs()">
+    <div class="tabbar">
+      ${['daily','monthly','yearly','bookmarks','magazine'].map(v=>`<div class="tabchip ${CA_VIEW===v?'active':''}" onclick="CA_VIEW='${v}';renderCurrentAffairs()">${v[0].toUpperCase()+v.slice(1)}</div>`).join('')}
+    </div>
+    <div class="tabbar">
+      <div class="tabchip ${CA_FILTER==='All'?'active':''}" onclick="CA_FILTER='All';renderCurrentAffairs()">All</div>
+      ${CA_CATEGORIES.map(c=>`<div class="tabchip ${CA_FILTER===c?'active':''}" onclick="CA_FILTER='${esc(c)}';renderCurrentAffairs()">${c}</div>`).join('')}
+    </div>
+    <div class="card">
+      ${items.length? items.map(i=>`
+        <div class="list-item">
+          <div class="list-item-body" onclick="openViewCA('${i.id}')">
+            <div class="list-item-title">${esc(i.title)}</div>
+            <div class="list-item-sub">${fmtShort(i.date)} · ${esc(i.category)}${i.linkedSubject?' · linked: '+esc(i.linkedSubject):''}</div>
+          </div>
+          <button class="topbar-btn" onclick="toggleCABookmark('${i.id}')" style="color:${i.bookmarked?'var(--warning)':'var(--text-faint)'}">${icon('bookmark',17)}</button>
+        </div>`).join('')
+      : `<div class="empty-state">${icon('news',30)}<p>No current affairs entries here yet. Tap Add to log today's reading.</p></div>`}
+    </div>
+  `;
+}
+function toggleCaMagazine(monthKey){
+  STATE.caMagazines[monthKey] = !STATE.caMagazines[monthKey];
+  saveState(); renderCurrentAffairs();
+}
+function openAddCA(){
+  const subjOptions = ['None','Anthropology', ...SUBJECT_KEYS.map(k=>SUBJECTS[k].name)];
+  openModal(`
+    <div class="modal-head"><h3>Add current affairs entry</h3><button class="topbar-btn" onclick="closeModal()">${icon('close',18)}</button></div>
+    <div class="field"><label>Date</label><input type="date" id="caDate" value="${todayISO()}"></div>
+    <div class="field"><label>Category</label><select id="caCategory">${CA_CATEGORIES.map(c=>`<option>${c}</option>`).join('')}</select></div>
+    <div class="field"><label>Title / headline</label><input id="caTitle" placeholder="e.g. RBI revises repo rate"></div>
+    <div class="field"><label>Link to static syllabus topic</label><select id="caLinked">${subjOptions.map(s=>`<option>${s}</option>`).join('')}</select></div>
+    <div class="field"><label>Notes</label><textarea id="caNotes" placeholder="Key points, static links, sources…"></textarea></div>
+    <button class="btn btn-primary btn-block" onclick="saveCA()">Save entry</button>
+  `);
+}
+function saveCA(){
+  const title = document.getElementById('caTitle').value.trim();
+  if(!title){ showToast('Please add a title'); return; }
+  const linked = document.getElementById('caLinked').value;
+  STATE.currentAffairs.push({
+    id:uid('ca'), date:document.getElementById('caDate').value||todayISO(),
+    category:document.getElementById('caCategory').value, title,
+    notes:document.getElementById('caNotes').value, bookmarked:false,
+    linkedSubject: linked==='None' ? '' : linked
+  });
+  saveState(); closeModal(); showToast('Entry saved'); renderCurrentAffairs();
+}
+function openViewCA(id){
+  const i = STATE.currentAffairs.find(x=>x.id===id); if(!i) return;
+  openModal(`
+    <div class="modal-head"><h3>${esc(i.title)}</h3><button class="topbar-btn" onclick="closeModal()">${icon('close',18)}</button></div>
+    <div class="muted" style="margin-bottom:10px">${fmtShort(i.date)} · ${esc(i.category)}${i.linkedSubject?' · linked to '+esc(i.linkedSubject):''}</div>
+    <p style="white-space:pre-wrap;font-size:0.86rem;line-height:1.6">${esc(i.notes)||'No notes added.'}</p>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn btn-danger btn-sm" onclick="deleteCA('${id}')">${icon('trash',14)} Delete</button>
+      <button class="btn btn-outline btn-sm" onclick="toggleCABookmark('${id}');closeModal()">${i.bookmarked?'Remove bookmark':'Bookmark'}</button>
+    </div>
+  `);
+}
+function toggleCABookmark(id){
+  const i = STATE.currentAffairs.find(x=>x.id===id); if(!i) return;
+  i.bookmarked = !i.bookmarked; saveState(); renderCurrentAffairs();
+}
+function deleteCA(id){
+  STATE.currentAffairs = STATE.currentAffairs.filter(x=>x.id!==id);
+  saveState(); closeModal(); renderCurrentAffairs();
+}
+
+/* ============================================================================
+   SCREEN: MOCK TESTS
+   ============================================================================ */
+let MOCK_FILTER = 'All';
+function renderMockTests(){
+  const el = document.getElementById('screen-mocktests');
+  const types = ['All','Sectional','Subject-wise','Full-length','CSAT'];
+  let items = STATE.mockTests.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  if(MOCK_FILTER!=='All') items = items.filter(i=>i.type===MOCK_FILTER);
+  const scores = STATE.mockTests.slice().sort((a,b)=>a.date.localeCompare(b.date));
+
+  el.innerHTML = `
+    <div class="screen-header row-between">
+      <div><h2>Mock Tests</h2><p>${STATE.mockTests.length} tests logged · Vision IAS Test Series compatible</p></div>
+      <button class="btn btn-primary btn-sm" onclick="openAddMock()">${icon('plus',14)} Add</button>
+    </div>
+    ${scores.length>1? `<div class="card"><b style="font-size:0.85rem">Improvement graph</b><canvas id="mockChart" style="width:100%;height:120px;margin-top:8px"></canvas></div>`:''}
+    <div class="tabbar">${types.map(t=>`<div class="tabchip ${MOCK_FILTER===t?'active':''}" onclick="MOCK_FILTER='${t}';renderMockTests()">${t}</div>`).join('')}</div>
+    <div class="card">
+      ${items.length? items.map(i=>`
+        <div class="list-item" onclick="openViewMock('${i.id}')">
+          <div class="subject-icon" style="background:var(--primary)">${i.accuracy||0}%</div>
+          <div class="list-item-body"><div class="list-item-title">${esc(i.type)} ${i.subject?'· '+esc(i.subject):''} ${i.rank?'· Rank '+esc(i.rank):''}</div>
+          <div class="list-item-sub">${fmtShort(i.date)} · ${i.obtained}/${i.total} marks · ${i.timeTaken} min</div></div>
+          <div class="chev">${icon('arrowRight',16)}</div>
+        </div>`).join('')
+      : `<div class="empty-state">${icon('trophy',30)}<p>No mock tests logged yet. Vision IAS test scores, rank, accuracy and negative marks all fit here.</p></div>`}
+    </div>
+  `;
+  if(scores.length>1){
+    const canvas = document.getElementById('mockChart');
+    drawLineChart(canvas, scores.map(s=>fmtShort(s.date)), scores.map(s=>s.obtained), '#1976D2');
+  }
+}
+function openAddMock(){
+  openModal(`
+    <div class="modal-head"><h3>Log a mock test</h3><button class="topbar-btn" onclick="closeModal()">${icon('close',18)}</button></div>
+    <div class="field-row"><div class="field"><label>Date</label><input type="date" id="mkDate" value="${todayISO()}"></div>
+      <div class="field"><label>Type</label><select id="mkType"><option>Sectional</option><option>Subject-wise</option><option>Full-length</option><option>CSAT</option></select></div></div>
+    <div class="field"><label>Subject (if applicable)</label><input id="mkSubject" placeholder="e.g. Polity, or leave blank"></div>
+    <div class="field-row"><div class="field"><label>Total marks</label><input type="number" id="mkTotal" value="200"></div>
+      <div class="field"><label>Marks obtained</label><input type="number" id="mkObtained" value="0"></div></div>
+    <div class="field-row"><div class="field"><label>Negative marks</label><input type="number" id="mkNegative" value="0"></div>
+      <div class="field"><label>Time taken (min)</label><input type="number" id="mkTime" value="120"></div></div>
+    <div class="field-row"><div class="field"><label>Accuracy (%)</label><input type="number" id="mkAccuracy" value="0"></div>
+      <div class="field"><label>Rank (manual, e.g. Vision IAS)</label><input id="mkRank" placeholder="e.g. 340 / 12000"></div></div>
+    <div class="field"><label>Weak subjects (comma separated)</label><input id="mkWeak" placeholder="e.g. Economy, Geography"></div>
+    <div class="field"><label>Notes / mistakes</label><textarea id="mkNotes"></textarea></div>
+    <button class="btn btn-primary btn-block" onclick="saveMock()">Save test</button>
+  `);
+}
+function saveMock(){
+  const weakSubjects = document.getElementById('mkWeak').value.split(',').map(s=>s.trim()).filter(Boolean);
+  STATE.mockTests.push({
+    id:uid('mock'), date:document.getElementById('mkDate').value||todayISO(),
+    type:document.getElementById('mkType').value, subject:document.getElementById('mkSubject').value.trim(),
+    total:+document.getElementById('mkTotal').value||0, obtained:+document.getElementById('mkObtained').value||0,
+    negative:+document.getElementById('mkNegative').value||0, accuracy:+document.getElementById('mkAccuracy').value||0,
+    timeTaken:+document.getElementById('mkTime').value||0, rank:document.getElementById('mkRank').value.trim(),
+    weakSubjects, notes:document.getElementById('mkNotes').value
+  });
+  // Auto-generate revision + weak-topic flags for every weak subject reported
+  weakSubjects.forEach(name=>{
+    const key = subjectKeyByName(name) || name;
+    addWeakTopic(key, 'Mock test performance', 'Flagged as weak subject in a mock test');
+  });
+  saveState(); closeModal(); showToast('Mock test saved · revision auto-scheduled for weak subjects'); renderMockTests();
+}
+function openViewMock(id){
+  const m = STATE.mockTests.find(x=>x.id===id); if(!m) return;
+  openModal(`
+    <div class="modal-head"><h3>${esc(m.type)}</h3><button class="topbar-btn" onclick="closeModal()">${icon('close',18)}</button></div>
+    <div class="grid-3" style="margin-bottom:12px">
+      <div class="stat-card"><div class="stat-val">${m.obtained}</div><div class="stat-label">Marks</div></div>
+      <div class="stat-card"><div class="stat-val">${m.accuracy}%</div><div class="stat-label">Accuracy</div></div>
+      <div class="stat-card"><div class="stat-val">${m.timeTaken}m</div><div class="stat-label">Time</div></div>
+    </div>
+    <p class="muted">Date: ${fmtHuman(m.date)}</p>
+    <p class="muted">Negative marks: ${m.negative}${m.rank?' · Rank: '+esc(m.rank):''}</p>
+    ${m.weakSubjects.length?`<div style="margin-top:8px">${m.weakSubjects.map(w=>`<span class="tag-chip weak">${esc(w)}</span>`).join('')}</div>`:''}
+    ${m.notes?`<p style="margin-top:10px;font-size:0.85rem;white-space:pre-wrap">${esc(m.notes)}</p>`:''}
+    <button class="btn btn-danger btn-sm" style="margin-top:14px" onclick="deleteMock('${id}')">${icon('trash',14)} Delete</button>
+  `);
+}
+function deleteMock(id){ STATE.mockTests = STATE.mockTests.filter(x=>x.id!==id); saveState(); closeModal(); renderMockTests(); }
+
+/* ============================================================================
+   SCREEN: REVISION (spaced repetition)
+   ============================================================================ */
+let REV_TAB = 'due';
+function renderRevision(){
+  const el = document.getElementById('screen-revision');
+  const tISO = todayISO();
+  const due = getDueRevisions(tISO).sort((a,b)=>a.dueDate.localeCompare(b.dueDate));
+  const upcoming = getUpcomingRevisions(tISO, 30).sort((a,b)=>a.dueDate.localeCompare(b.dueDate));
+  const completed = STATE.revisions.filter(r=>r.done).sort((a,b)=>b.dueDate.localeCompare(a.dueDate));
+  const list = REV_TAB==='due'?due:(REV_TAB==='upcoming'?upcoming:completed);
+  el.innerHTML = `
+    <div class="screen-header"><h2>Revision</h2><p>Spaced repetition: 1 · 7 · 15 · 30 · 60 · 90 days</p></div>
+    <div class="grid-3">
+      <div class="stat-card"><div class="stat-val" style="color:var(--danger)">${due.length}</div><div class="stat-label">Due now</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--warning)">${upcoming.length}</div><div class="stat-label">Next 30d</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--success)">${completed.length}</div><div class="stat-label">Completed</div></div>
+    </div>
+    <div class="tabbar" style="margin-top:14px">
+      <div class="tabchip ${REV_TAB==='due'?'active':''}" onclick="REV_TAB='due';renderRevision()">Due</div>
+      <div class="tabchip ${REV_TAB==='upcoming'?'active':''}" onclick="REV_TAB='upcoming';renderRevision()">Upcoming</div>
+      <div class="tabchip ${REV_TAB==='completed'?'active':''}" onclick="REV_TAB='completed';renderRevision()">Completed</div>
+    </div>
+    <div class="card">
+      ${list.length? list.slice(0,80).map(r=>`
+        <div class="task-row">
+          ${REV_TAB!=='completed'?`<div class="chk" onclick="completeRevision('${r.id}');renderRevision()">${icon('check',13)}</div>`:`<div class="chk done">${icon('check',13)}</div>`}
+          <div class="task-main"><div class="task-title">${esc(r.subjectName)}: ${esc(r.chapter)}</div>
+          <div class="task-sub">${REV_TAB==='due' && r.dueDate<tISO?'Missed on '+fmtShort(r.dueDate)+' — auto-moved to today':'Due '+fmtShort(r.dueDate)}</div></div>
+        </div>`).join('')
+      : `<div class="empty-state">${icon('repeat',30)}<p>Nothing here. Complete chapters in Subjects or Anthropology to auto-schedule revisions.</p></div>`}
+    </div>
+  `;
+}
+
+/* ============================================================================
+   SCREEN: PYQ TRACKER
+   ============================================================================ */
+function renderPYQ(){
+  const el = document.getElementById('screen-pyq');
+  const items = STATE.pyq.slice().sort((a,b)=>b.year-a.year);
+  const avgAcc = items.length? Math.round(items.reduce((a,i)=>a+i.correctPct,0)/items.length) : 0;
+  el.innerHTML = `
+    <div class="screen-header row-between">
+      <div><h2>PYQ Tracker</h2><p>${items.length} questions · avg ${avgAcc}% correct</p></div>
+      <button class="btn btn-primary btn-sm" onclick="openAddPYQ()">${icon('plus',14)} Add</button>
+    </div>
+    <div class="card">
+      ${items.length? items.map(p=>`
+        <div class="list-item">
+          <div class="list-item-body"><div class="list-item-title">${p.year} · ${esc(p.subject)} — ${esc(p.topic)}</div>
+          <div class="list-item-sub">${p.solved?'Solved':'Unsolved'} · ${p.correctPct}% correct · ${esc(p.difficulty)}</div></div>
+          <button class="topbar-btn" onclick="togglePYQBookmark('${p.id}')" style="color:${p.bookmarked?'var(--warning)':'var(--text-faint)'}">${icon('bookmark',17)}</button>
+        </div>`).join('')
+      : `<div class="empty-state">${icon('book',30)}<p>No PYQs logged yet. Track year, subject, topic, and accuracy for every previous-year question you solve.</p></div>`}
+    </div>
+  `;
+}
+function openAddPYQ(presetSubject){
+  const subjOptions = ['Anthropology', ...SUBJECT_KEYS.map(k=>SUBJECTS[k].name)];
+  openModal(`
+    <div class="modal-head"><h3>Add PYQ</h3><button class="topbar-btn" onclick="closeModal()">${icon('close',18)}</button></div>
+    <div class="field-row"><div class="field"><label>Year</label><input type="number" id="pyYear" value="${new Date().getFullYear()}"></div>
+      <div class="field"><label>Subject</label><select id="pySubject">${subjOptions.map(s=>`<option ${s===presetSubject?'selected':''}>${s}</option>`).join('')}</select></div></div>
+    <div class="field"><label>Topic</label><input id="pyTopic" placeholder="e.g. Fundamental Rights"></div>
+    <div class="field-row"><div class="field"><label>Solved?</label><select id="pySolved"><option value="1">Yes</option><option value="0">No</option></select></div>
+      <div class="field"><label>Correct %</label><input type="number" id="pyCorrect" value="0"></div></div>
+    <div class="field"><label>Difficulty</label><select id="pyDifficulty"><option>Easy</option><option>Moderate</option><option>Difficult</option></select></div>
+    <button class="btn btn-primary btn-block" onclick="savePYQ()">Save PYQ</button>
+  `);
+}
+function savePYQ(){
+  const topic = document.getElementById('pyTopic').value.trim();
+  if(!topic){ showToast('Add a topic'); return; }
+  const subject = document.getElementById('pySubject').value;
+  const solved = document.getElementById('pySolved').value==='1';
+  const correctPct = +document.getElementById('pyCorrect').value||0;
+  STATE.pyq.push({
+    id:uid('pyq'), year:+document.getElementById('pyYear').value, subject,
+    topic, solved, correctPct,
+    difficulty:document.getElementById('pyDifficulty').value, bookmarked:false, dateAdded:todayISO()
+  });
+  const subjectKey = subjectKeyByName(subject) || subject;
+  if(correctPct < 70){ addWeakTopic(subjectKey, topic, `PYQ accuracy ${correctPct}% (below 70%)`); }
+  if(!solved){
+    const wkey = subject+'::'+topic;
+    STATE.pyqWrongCounts[wkey] = (STATE.pyqWrongCounts[wkey]||0)+1;
+    if(STATE.pyqWrongCounts[wkey] >= 2){ addWeakTopic(subjectKey, topic, 'Answered wrong twice in PYQs'); }
+  }
+  saveState(); closeModal(); showToast('PYQ saved'); renderCurrentScreen();
+}
+function subjectKeyByName(name){
+  return SUBJECT_KEYS.find(k=>SUBJECTS[k].name===name) || null;
+}
+function togglePYQBookmark(id){
+  const p = STATE.pyq.find(x=>x.id===id); if(!p) return;
+  p.bookmarked = !p.bookmarked; saveState(); renderPYQ();
+}
+
+/* ============================================================================
+   SCREEN: ANSWER WRITING
+   ============================================================================ */
+function renderAnswerWriting(){
+  const el = document.getElementById('screen-answerwriting');
+  const items = STATE.answerWriting.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  const todayCount = items.filter(a=>a.date===todayISO()).length;
+  const avgWords = items.length? Math.round(items.reduce((a,i)=>a+(i.wordCount||0),0)/items.length):0;
+  el.innerHTML = `
+    <div class="screen-header row-between">
+      <div><h2>Answer Writing</h2><p>Daily target: 1–2 answers</p></div>
+      <button class="btn btn-primary btn-sm" onclick="openAddAnswer()">${icon('plus',14)} Add</button>
+    </div>
+    <div class="grid-3">
+      <div class="stat-card"><div class="stat-val">${todayCount}</div><div class="stat-label">Today</div></div>
+      <div class="stat-card"><div class="stat-val">${items.length}</div><div class="stat-label">Total</div></div>
+      <div class="stat-card"><div class="stat-val">${avgWords}</div><div class="stat-label">Avg words</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      ${items.length? items.map(a=>`
+        <div class="list-item" onclick="openViewAnswer('${a.id}')">
+          <div class="list-item-body"><div class="list-item-title">${esc(a.question)}</div>
+          <div class="list-item-sub">${fmtShort(a.date)} · ${a.wordCount} words · ${a.timeMinutes} min</div></div>
+          <div class="chev">${icon('arrowRight',16)}</div>
+        </div>`).join('')
+      : `<div class="empty-state">${icon('pen',30)}<p>No answers logged yet. Track word count, time taken and self-evaluation notes.</p></div>`}
+    </div>
+  `;
+}
+function openAddAnswer(presetMarks, presetDate){
+  openModal(`
+    <div class="modal-head"><h3>Log an answer</h3><button class="topbar-btn" onclick="closeModal()">${icon('close',18)}</button></div>
+    <div class="field-row">
+      <div class="field"><label>Date</label><input type="date" id="awDate" value="${presetDate||todayISO()}"></div>
+      <div class="field"><label>Marks</label><select id="awMarks"><option value="10" ${presetMarks===15?'':'selected'}>10 marker</option><option value="15" ${presetMarks===15?'selected':''}>15 marker</option></select></div>
+    </div>
+    <div class="field"><label>Question</label><textarea id="awQuestion" placeholder="Paste or type the question…"></textarea></div>
+    <div class="field-row"><div class="field"><label>Word count</label><input type="number" id="awWords" value="${presetMarks===15?250:150}"></div>
+      <div class="field"><label>Time taken (min)</label><input type="number" id="awTime" value="${presetMarks===15?13:9}"></div></div>
+    <div class="field"><label>Self-evaluation notes</label><textarea id="awEval" placeholder="Structure, intro/conclusion, diagrams used, areas to improve…"></textarea></div>
+    <button class="btn btn-primary btn-block" onclick="saveAnswer()">Save</button>
+  `);
+}
+function saveAnswer(){
+  const q = document.getElementById('awQuestion').value.trim();
+  if(!q){ showToast('Add a question'); return; }
+  STATE.answerWriting.push({
+    id:uid('aw'), date:document.getElementById('awDate').value||todayISO(), question:q,
+    wordCount:+document.getElementById('awWords').value||0, timeMinutes:+document.getElementById('awTime').value||0,
+    evalNotes:document.getElementById('awEval').value, marks:+document.getElementById('awMarks').value||10
+  });
+  updateStreak(); saveState(); closeModal(); showToast('Answer logged'); renderAnswerWriting();
+}
+function openViewAnswer(id){
+  const a = STATE.answerWriting.find(x=>x.id===id); if(!a) return;
+  openModal(`
+    <div class="modal-head"><h3>Answer detail</h3><button class="topbar-btn" onclick="closeModal()">${icon('close',18)}</button></div>
+    <p style="font-weight:700;font-size:0.9rem">${esc(a.question)}</p>
+    <p class="muted" style="margin-top:6px">${fmtHuman(a.date)} · ${a.wordCount} words · ${a.timeMinutes} min</p>
+    ${a.evalNotes?`<div class="divider"></div><p style="font-size:0.85rem;white-space:pre-wrap">${esc(a.evalNotes)}</p>`:''}
+    <button class="btn btn-danger btn-sm" style="margin-top:14px" onclick="deleteAnswer('${id}')">${icon('trash',14)} Delete</button>
+  `);
+}
+function deleteAnswer(id){ STATE.answerWriting = STATE.answerWriting.filter(x=>x.id!==id); saveState(); closeModal(); renderAnswerWriting(); }
+
+/* ============================================================================
+   SCREEN: HABIT TRACKER
+   ============================================================================ */
+function renderHabits(){
+  const el = document.getElementById('screen-habits');
+  const tISO = todayISO();
+  const hd = getHabitDay(tISO);
+  const doneCount = HABITS.filter(h=>hd[h.key]).length;
+  // last 7 days strip
+  const last7 = [];
+  for(let i=6;i>=0;i--){ const d = addDays(todayDate(),-i); last7.push(fmtISO(d)); }
+  el.innerHTML = `
+    <div class="screen-header"><h2>Habit Tracker</h2><p>Build the routine that carries you to Prelims</p></div>
+    <div class="card">
+      <div class="row-between"><b style="font-size:0.85rem">Today</b><span class="muted">${doneCount}/${HABITS.length}</span></div>
+      <div class="pbar" style="margin-top:8px"><div style="width:${Math.round(doneCount/HABITS.length*100)}%;background:var(--success)"></div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      ${HABITS.map(h=>`
+        <div class="task-row">
+          <div class="chk ${hd[h.key]?'done':''}" onclick="toggleHabit('${h.key}')">${icon('check',13)}</div>
+          <div class="task-main"><div class="task-title ${hd[h.key]?'strike':''}">${h.label}</div></div>
+        </div>`).join('')}
+    </div>
+    <div class="section-title">Last 7 days</div>
+    <div class="card">
+      <div class="weekday-strip">
+        ${last7.map(ds=>{
+          const d = STATE.habits[ds]||{};
+          const c = HABITS.filter(h=>d[h.key]).length;
+          return `<div class="wd-item"><div class="wd-dot ${c>=HABITS.length*0.7?'done':''}">${c}</div>${DOW[parseISO(ds).getDay()]}</div>`;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+function toggleHabit(key){
+  const hd = getHabitDay(todayISO());
+  hd[key] = !hd[key];
+  updateStreak(); saveState(); renderHabits();
+}
+
+/* ============================================================================
+   SCREEN: STUDY TIMER (Pomodoro / Stopwatch / Focus / Break)
+   ============================================================================ */
+let TIMER_MODE = 'pomodoro'; // pomodoro | stopwatch | focus | break
+let TIMER_STATE = { running:false, remaining:25*60, elapsed:0, intervalId:null, sessionMins:25 };
+const TIMER_PRESETS = { pomodoro:25*60, focus:50*60, break:5*60 };
+
+function renderTimer(){
+  const el = document.getElementById('screen-timer');
+  const isCountdown = TIMER_MODE !== 'stopwatch';
+  const displaySecs = isCountdown ? TIMER_STATE.remaining : TIMER_STATE.elapsed;
+  const mm = String(Math.floor(displaySecs/60)).padStart(2,'0');
+  const ss = String(displaySecs%60).padStart(2,'0');
+  const total = isCountdown ? TIMER_STATE.sessionMins*60 : Math.max(displaySecs,1);
+  const ringR = 80, ringC = 2*Math.PI*ringR;
+  const frac = isCountdown ? (1 - TIMER_STATE.remaining/total) : 0;
+
+  el.innerHTML = `
+    <div class="screen-header"><h2>Study Timer</h2><p>Pomodoro · Stopwatch · Focus Mode · Break Timer</p></div>
+    <div class="tabbar">
+      ${['pomodoro','stopwatch','focus','break'].map(m=>`<div class="tabchip ${TIMER_MODE===m?'active':''}" onclick="switchTimerMode('${m}')">${m[0].toUpperCase()+m.slice(1)}</div>`).join('')}
+    </div>
+    <div class="card" style="text-align:center;padding:24px 14px">
+      <div class="timer-ring-wrap">
+        <svg width="180" height="180">
+          <circle cx="90" cy="90" r="${ringR}" stroke="var(--border)" stroke-width="10" fill="none"/>
+          ${isCountdown?`<circle cx="90" cy="90" r="${ringR}" stroke="var(--accent)" stroke-width="10" fill="none" stroke-linecap="round"
+            stroke-dasharray="${ringC}" stroke-dashoffset="${ringC*(1-frac)}" transform="rotate(-90 90 90)"/>`:
+            `<circle cx="90" cy="90" r="${ringR}" stroke="var(--accent)" stroke-width="10" fill="none" stroke-linecap="round"
+            stroke-dasharray="${ringC}" stroke-dashoffset="0" transform="rotate(-90 90 90)" opacity="0.5"/>`}
+        </svg>
+        <div class="timer-display" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);margin:0;font-size:2.1rem">${mm}:${ss}</div>
+      </div>
+      ${TIMER_MODE==='pomodoro'||TIMER_MODE==='focus'||TIMER_MODE==='break'?`
+      <div style="display:flex;gap:8px;justify-content:center;margin:10px 0 16px">
+        ${(TIMER_MODE==='pomodoro'?[15,25,45]:TIMER_MODE==='focus'?[25,50,90]:[5,10,15]).map(m=>`<button class="btn btn-sm ${TIMER_STATE.sessionMins===m?'btn-accent':'btn-outline'}" onclick="setTimerPreset(${m})">${m}m</button>`).join('')}
+      </div>`:''}
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:8px">
+        <button class="btn btn-primary" onclick="timerToggle()">${TIMER_STATE.running?icon('pause',16):icon('play',16)} ${TIMER_STATE.running?'Pause':'Start'}</button>
+        <button class="btn btn-ghost" onclick="timerReset()">${icon('reset',16)} Reset</button>
+      </div>
+    </div>
+    <div class="section-title">Today's study hours</div>
+    <div class="card row-between">
+      <div><div class="stat-val" style="font-size:1.4rem">${(studyMinutesForDate(todayISO())/60).toFixed(1)}h</div><div class="stat-label">logged today</div></div>
+      <div class="streak-flame" style="color:var(--warning)">${icon('flame',20)}<b>${STATE.streak.current} day streak</b></div>
+    </div>
+    <div class="section-title">Weekly graph</div>
+    <div class="card"><canvas id="timerWeekChart" style="width:100%;height:110px"></canvas></div>
+    <div class="section-title">Monthly graph</div>
+    <div class="card"><canvas id="timerMonthChart" style="width:100%;height:110px"></canvas></div>
+  `;
+  const weekLabels=[], weekVals=[];
+  for(let i=6;i>=0;i--){ const d=addDays(todayDate(),-i); weekLabels.push(DOW[d.getDay()]); weekVals.push(Math.round(studyMinutesForDate(fmtISO(d))/6)/10); }
+  drawBarChart(document.getElementById('timerWeekChart'), weekLabels, weekVals, '#1976D2');
+  const monthLabels=[], monthVals=[];
+  for(let i=29;i>=0;i-=3){ const d=addDays(todayDate(),-i); monthLabels.push(String(d.getDate())); monthVals.push(Math.round(studyMinutesForDate(fmtISO(d))/6)/10); }
+  drawLineChart(document.getElementById('timerMonthChart'), monthLabels, monthVals, '#2E7D32');
+}
+function switchTimerMode(m){
+  timerPause();
+  TIMER_MODE = m;
+  TIMER_STATE.sessionMins = m==='stopwatch'?0:(m==='pomodoro'?25:m==='focus'?50:5);
+  TIMER_STATE.remaining = TIMER_STATE.sessionMins*60;
+  TIMER_STATE.elapsed = 0;
+  renderTimer();
+}
+function setTimerPreset(m){
+  TIMER_STATE.sessionMins = m; TIMER_STATE.remaining = m*60; renderTimer();
+}
+function timerToggle(){ TIMER_STATE.running ? timerPause() : timerStart(); }
+function timerStart(){
+  if(TIMER_STATE.running) return;
+  TIMER_STATE.running = true;
+  TIMER_STATE.intervalId = setInterval(()=>{
+    if(TIMER_MODE==='stopwatch'){ TIMER_STATE.elapsed++; }
+    else{
+      TIMER_STATE.remaining--;
+      if(TIMER_STATE.remaining<=0){
+        timerPause();
+        addStudyMinutes(TIMER_STATE.sessionMins);
+        showToast(TIMER_MODE==='break' ? 'Break over! Back to focused study.' : '⏰ Session complete — great work!');
+        if(TIMER_MODE!=='break') fireConfetti();
+        TIMER_STATE.remaining = TIMER_STATE.sessionMins*60;
+      }
+    }
+    if(CURRENT_SCREEN==='timer') updateTimerDisplayOnly();
+  }, 1000);
+  renderTimer();
+}
+function timerPause(){
+  TIMER_STATE.running = false;
+  clearInterval(TIMER_STATE.intervalId);
+  if(CURRENT_SCREEN==='timer') renderTimer();
+}
+function timerReset(){
+  timerPause();
+  TIMER_STATE.remaining = TIMER_STATE.sessionMins*60;
+  TIMER_STATE.elapsed = 0;
+  if(TIMER_MODE==='stopwatch' && TIMER_STATE.elapsed>0){ addStudyMinutes(Math.round(TIMER_STATE.elapsed/60)); }
+  renderTimer();
+}
+function updateTimerDisplayOnly(){
+  const disp = document.querySelector('.timer-display');
+  if(!disp) return;
+  const secs = TIMER_MODE==='stopwatch' ? TIMER_STATE.elapsed : TIMER_STATE.remaining;
+  disp.textContent = String(Math.floor(secs/60)).padStart(2,'0')+':'+String(secs%60).padStart(2,'0');
+  const ringR=80, ringC=2*Math.PI*ringR;
+  const total = TIMER_STATE.sessionMins*60||1;
+  const frac = TIMER_MODE==='stopwatch' ? 0 : (1-TIMER_STATE.remaining/total);
+  const circles = document.querySelectorAll('.timer-ring-wrap svg circle');
+  if(circles[1]) circles[1].setAttribute('stroke-dashoffset', ringC*(1-frac));
+}
+
+/* ============================================================================
+   SCREEN: STATISTICS / ANALYTICS DASHBOARD
+   ============================================================================ */
+function renderStatistics(){
+  const el = document.getElementById('screen-statistics');
+  const overallPct = overallCompletionPct();
+  const totalStudyMins = Object.values(STATE.days).reduce((a,d)=>a+(d.studyMinutes||0),0);
+  const revDone = STATE.revisions.filter(r=>r.done).length;
+  const revTotal = STATE.revisions.length;
+  const avgAccuracy = STATE.mockTests.length? Math.round(STATE.mockTests.reduce((a,m)=>a+m.accuracy,0)/STATE.mockTests.length):0;
+  const mcqAvg = STATE.mcqLogs.length? Math.round(STATE.mcqLogs.reduce((a,m)=>a+m.accuracy,0)/STATE.mcqLogs.length):0;
+  const pyqAvg = STATE.pyq.length? Math.round(STATE.pyq.reduce((a,p)=>a+p.correctPct,0)/STATE.pyq.length):0;
+  const mainsCount = STATE.answerWriting.length;
+  const mains10 = STATE.answerWriting.filter(a=>a.marks===10||!a.marks).length;
+  const mains15 = STATE.answerWriting.filter(a=>a.marks===15).length;
+  const readiness = computeReadiness();
+
+  // Heatmap: last 90 days
+  const heatDays = [];
+  for(let i=89;i>=0;i--) heatDays.push(fmtISO(addDays(todayDate(),-i)));
+
+  el.innerHTML = `
+    <div class="screen-header"><h2>Statistics</h2><p>Your full preparation dashboard</p></div>
+    <div class="grid-2">
+      <div class="stat-card"><div class="stat-val">${(totalStudyMins/60).toFixed(0)}h</div><div class="stat-label">Total study hours</div></div>
+      <div class="stat-card"><div class="stat-val">${overallPct}%</div><div class="stat-label">Subject completion</div></div>
+      <div class="stat-card"><div class="stat-val">${revTotal?Math.round(revDone/revTotal*100):0}%</div><div class="stat-label">Revision completion</div></div>
+      <div class="stat-card"><div class="stat-val">${STATE.mockTests.length}</div><div class="stat-label">Mock scores logged</div></div>
+      <div class="stat-card"><div class="stat-val">${mcqAvg}%</div><div class="stat-label">MCQ accuracy</div></div>
+      <div class="stat-card"><div class="stat-val">${pyqAvg}%</div><div class="stat-label">PYQ accuracy</div></div>
+    </div>
+    <div class="card" style="margin-top:12px;text-align:center">
+      <div class="muted" style="margin-bottom:6px">Predicted readiness</div>
+      <div style="font-family:var(--font-display);font-size:2.4rem;font-weight:700;color:var(--primary)">${readiness}%</div>
+      <div class="pbar" style="margin-top:10px"><div style="width:${readiness}%"></div></div>
+      <div class="muted" style="margin-top:8px">Based on syllabus completion, revision consistency, mock accuracy & study streak</div>
+    </div>
+    <div class="section-title">Mains answers written <span class="tag">${mainsCount} total</span></div>
+    <div class="card">
+      <div class="grid-2">
+        <div class="stat-card"><div class="stat-val">${mains10}</div><div class="stat-label">10-markers</div></div>
+        <div class="stat-card"><div class="stat-val">${mains15}</div><div class="stat-label">15-markers</div></div>
+      </div>
+    </div>
+    <div class="section-title">Subject completion</div>
+    <div class="card"><canvas id="statSubjChart" style="width:100%;height:170px"></canvas></div>
+    <div class="section-title">MCQ accuracy trend</div>
+    <div class="card"><canvas id="statMcqChart" style="width:100%;height:120px"></canvas></div>
+    <div class="section-title">Mock accuracy trend <span class="tag">avg ${avgAccuracy}%</span></div>
+    <div class="card"><canvas id="statAccChart" style="width:100%;height:120px"></canvas></div>
+    <div class="section-title">Consistency heatmap <span class="tag">last 90 days</span></div>
+    <div class="card">
+      <div class="heatmap">
+        ${heatDays.map(ds=>{
+          const mins = studyMinutesForDate(ds);
+          const intensity = mins===0?0: mins<30?1: mins<60?2: mins<120?3:4;
+          const colors=['var(--border)','#a5c8f0','#6fa8e0','#3b7dc4','#0D47A1'];
+          return `<div class="heat-cell" title="${ds}: ${mins}min" style="background:${colors[intensity]}"></div>`;
+        }).join('')}
+      </div>
+    </div>
+  `;
+  const subjLabels = SUBJECT_KEYS.map(k=>SUBJECTS[k].name.slice(0,4));
+  const subjVals = SUBJECT_KEYS.map(k=>subjectCompletion(k).pct);
+  drawBarChart(document.getElementById('statSubjChart'), subjLabels, subjVals, '#0D47A1');
+  const mcqSorted = STATE.mcqLogs.slice().sort((a,b)=>a.date.localeCompare(b.date));
+  if(mcqSorted.length){
+    drawLineChart(document.getElementById('statMcqChart'), mcqSorted.map(m=>fmtShort(m.date)), mcqSorted.map(m=>m.accuracy), '#2E7D32');
+  }
+  const accSorted = STATE.mockTests.slice().sort((a,b)=>a.date.localeCompare(b.date));
+  if(accSorted.length){
+    drawLineChart(document.getElementById('statAccChart'), accSorted.map(m=>fmtShort(m.date)), accSorted.map(m=>m.accuracy), '#F9A825');
+  }
+}
+function computeReadiness(){
+  const compPct = overallCompletionPct();
+  const revTotal = STATE.revisions.length;
+  const revPct = revTotal? Math.round(STATE.revisions.filter(r=>r.done).length/revTotal*100) : 50;
+  const avgAcc = STATE.mockTests.length? Math.round(STATE.mockTests.reduce((a,m)=>a+m.accuracy,0)/STATE.mockTests.length) : 40;
+  const streakScore = Math.min(100, (STATE.streak.current||0)*4);
+  return Math.round(compPct*0.35 + revPct*0.25 + avgAcc*0.25 + streakScore*0.15);
+}
+
+/* ============================================================================
+   SCREEN: FLASHCARDS (also hosts Formula Sheet / Bookmarks quick links)
+   ============================================================================ */
+let FLASH_INDEX = 0;
+let FLASH_FLIPPED = false;
+function renderFlashcards(){
+  const el = document.getElementById('screen-flashcards');
+  const cards = STATE.flashcards;
+  if(FLASH_INDEX >= cards.length) FLASH_INDEX = 0;
+  const c = cards[FLASH_INDEX];
+  el.innerHTML = `
+    <div class="screen-header row-between">
+      <div><h2>Flashcards</h2><p>${cards.length} cards saved</p></div>
+      <button class="btn btn-primary btn-sm" onclick="openAddFlashcard()">${icon('plus',14)} Add</button>
+    </div>
+    ${cards.length? `
+    <div class="flash-card" onclick="FLASH_FLIPPED=!FLASH_FLIPPED;renderFlashcards()">
+      <div class="fc-tag">${esc(c.subject||'General')} · ${FLASH_INDEX+1}/${cards.length}</div>
+      <div>${esc(FLASH_FLIPPED? c.back : c.front)}</div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-outline btn-block" onclick="flashNav(-1)">${icon('arrowLeft',14)} Prev</button>
+      <button class="btn btn-outline btn-block" onclick="flashNav(1)">Next ${icon('arrowRight',14)}</button>
+    </div>
+    <button class="btn btn-danger btn-sm btn-block" style="margin-top:10px" onclick="deleteFlashcard('${c.id}')">${icon('trash',14)} Delete this card</button>
+    ` : `<div class="empty-state">${icon('stack',30)}<p>No flashcards yet. Add key facts, dates, and definitions for quick daily revision.</p></div>`}
+
+    <div class="section-title">Quick access</div>
+    <div class="more-grid">
+      <div class="more-item" onclick="navigate('currentaffairs');CA_VIEW='bookmarks'">
+        <div class="mi-icon" style="background:rgba(249,168,37,.15);color:var(--warning)">${icon('bookmark',20)}</div><span>Bookmarks</span></div>
+      <div class="more-item" onclick="openFormulaSheet()">
+        <div class="mi-icon" style="background:rgba(46,125,50,.15);color:var(--success)">${icon('layers',20)}</div><span>Formula Sheet</span></div>
+      <div class="more-item" onclick="openGlobalNotes()">
+        <div class="mi-icon" style="background:rgba(13,71,161,.12);color:var(--primary)">${icon('edit',20)}</div><span>Global Notes</span></div>
+    </div>
+  `;
+}
+function flashNav(dir){
+  const n = STATE.flashcards.length; if(!n) return;
+  FLASH_INDEX = (FLASH_INDEX + dir + n) % n;
+  FLASH_FLIPPED = false;
+  renderFlashcards();
+}
+function openAddFlashcard(){
+  const subjOptions = ['General','Anthropology', ...SUBJECT_KEYS.map(k=>SUBJECTS[k].name)];
+  openModal(`
+    <div class="modal-head"><h3>Add flashcard</h3><button class="topbar-btn" onclick="closeModal()">${icon('close',18)}</button></div>
+    <div class="field"><label>Subject</label><select id="fcSubject">${subjOptions.map(s=>`<option>${s}</option>`).join('')}</select></div>
+    <div class="field"><label>Front (question/term)</label><textarea id="fcFront"></textarea></div>
+    <div class="field"><label>Back (answer/definition)</label><textarea id="fcBack"></textarea></div>
+    <button class="btn btn-primary btn-block" onclick="saveFlashcard()">Save</button>
+  `);
+}
+function saveFlashcard(){
+  const front = document.getElementById('fcFront').value.trim();
+  const back = document.getElementById('fcBack').value.trim();
+  if(!front||!back){ showToast('Fill both sides'); return; }
+  STATE.flashcards.push({id:uid('fc'), subject:document.getElementById('fcSubject').value, front, back});
+  saveState(); closeModal(); showToast('Flashcard added'); renderFlashcards();
+}
+function deleteFlashcard(id){
+  STATE.flashcards = STATE.flashcards.filter(x=>x.id!==id);
+  FLASH_INDEX = 0; saveState(); renderFlashcards();
+}
+function openFormulaSheet(){
+  openModal(`
+    <div class="modal-head"><h3>Formula & Fact Sheet</h3><button class="topbar-btn" onclick="closeModal()">${icon('close',18)}</button></div>
+    <textarea id="formulaSheetInput" style="min-height:260px" placeholder="Keep economy formulas, polity articles, geography facts here for quick reference…">${esc(STATE.formulaSheet||'')}</textarea>
+    <button class="btn btn-primary btn-block" style="margin-top:10px" onclick="saveFormulaSheet()">Save</button>
+  `);
+}
+function saveFormulaSheet(){
+  STATE.formulaSheet = document.getElementById('formulaSheetInput').value;
+  saveState(); closeModal(); showToast('Formula sheet saved');
+}
+function openGlobalNotes(){
+  openModal(`
+    <div class="modal-head"><h3>Global Notes</h3><button class="topbar-btn" onclick="closeModal()">${icon('close',18)}</button></div>
+    <textarea id="globalNotesInput" style="min-height:260px" placeholder="Anything that doesn't belong to a specific subject…">${esc(STATE.globalNotes||'')}</textarea>
+    <button class="btn btn-primary btn-block" style="margin-top:10px" onclick="saveGlobalNotes()">Save</button>
+  `);
+}
+function saveGlobalNotes(){
+  STATE.globalNotes = document.getElementById('globalNotesInput').value;
+  saveState(); closeModal(); showToast('Notes saved');
+}
+
+/* ============================================================================
+   SCREEN: ERROR NOTEBOOK — every mock/MCQ mistake, made searchable
+   ============================================================================ */
+function renderErrorNotebook(){
+  const el = document.getElementById('screen-errornotebook');
+  const items = STATE.errorNotebook.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  const tISO = todayISO();
+  const dueForRevision = items.filter(i=>!i.resolved && i.revisionDate && i.revisionDate<=tISO);
+  el.innerHTML = `
+    <div class="screen-header row-between">
+      <div><h2>Error Notebook</h2><p>${items.length} entries logged</p></div>
+      <button class="btn btn-primary btn-sm" onclick="openAddError()">${icon('plus',14)} Add</button>
+    </div>
+    ${dueForRevision.length?`
+    <div class="section-title">Due for re-look <span class="tag">${dueForRevision.length}</span></div>
+    <div class="card">
+      ${dueForRevision.map(i=>`<div class="task-row"><div class="chk" onclick="resolveError('${i.id}')">${icon('check',13)}</div>
+        <div class="task-main" onclick="openViewError('${i.id}')"><div class="task-title">${esc(i.question)}</div><div class="task-sub">${esc(i.subject)} · was due ${fmtShort(i.revisionDate)}</div></div></div>`).join('')}
+    </div>`:''}
+    <div class="section-title">All entries</div>
+    <div class="card">
+      ${items.length? items.map(i=>`
+        <div class="list-item" onclick="openViewError('${i.id}')">
+          <div class="subject-icon" style="background:var(--danger)">${icon('edit',16)}</div>
+          <div class="list-item-body"><div class="list-item-title">${esc(i.question)}</div>
+          <div class="list-item-sub">${esc(i.subject)} · ${fmtShort(i.date)} ${i.resolved?'· resolved':''}</div></div>
+          <div class="chev">${icon('arrowRight',16)}</div>
+        </div>`).join('')
+      : `<div class="empty-state">${icon('edit',30)}<p>Whenever a mock or MCQ set reveals a mistake, log the wrong concept, the correct concept, and why you got it wrong — this becomes your most valuable revision material.</p></div>`}
+    </div>
+  `;
+}
+function openAddError(){
+  const subjOptions = ['General','Anthropology', ...SUBJECT_KEYS.map(k=>SUBJECTS[k].name)];
+  openModal(`
+    <div class="modal-head"><h3>Log a mistake</h3><button class="topbar-btn" onclick="closeModal()">${icon('close',18)}</button></div>
+    <div class="field"><label>Subject</label><select id="errSubject">${subjOptions.map(s=>`<option>${s}</option>`).join('')}</select></div>
+    <div class="field"><label>Question</label><textarea id="errQuestion" placeholder="What was asked?"></textarea></div>
+    <div class="field"><label>Wrong concept (what you thought)</label><textarea id="errWrong"></textarea></div>
+    <div class="field"><label>Correct concept</label><textarea id="errCorrect"></textarea></div>
+    <div class="field"><label>Reason for mistake</label><input id="errReason" placeholder="e.g. confused two Articles, silly error, guessed"></div>
+    <div class="field"><label>Revision date</label><input type="date" id="errRevDate" value="${fmtISO(addDays(todayDate(),7))}"></div>
+    <button class="btn btn-primary btn-block" onclick="saveError()">Save entry</button>
+  `);
+}
+function saveError(){
+  const question = document.getElementById('errQuestion').value.trim();
+  if(!question){ showToast('Add the question'); return; }
+  STATE.errorNotebook.push({
+    id:uid('err'), date:todayISO(), subject:document.getElementById('errSubject').value, question,
+    wrongConcept:document.getElementById('errWrong').value, correctConcept:document.getElementById('errCorrect').value,
+    reason:document.getElementById('errReason').value, revisionDate:document.getElementById('errRevDate').value, resolved:false
+  });
+  saveState(); closeModal(); showToast('Logged to Error Notebook'); renderErrorNotebook();
+}
+function openViewError(id){
+  const i = STATE.errorNotebook.find(x=>x.id===id); if(!i) return;
+  openModal(`
+    <div class="modal-head"><h3>${esc(i.subject)}</h3><button class="topbar-btn" onclick="closeModal()">${icon('close',18)}</button></div>
+    <p style="font-weight:700;font-size:0.88rem">${esc(i.question)}</p>
+    <div class="divider"></div>
+    <p class="muted" style="margin-bottom:3px">Wrong concept</p><p style="font-size:0.85rem;margin-bottom:10px">${esc(i.wrongConcept)||'—'}</p>
+    <p class="muted" style="margin-bottom:3px">Correct concept</p><p style="font-size:0.85rem;margin-bottom:10px">${esc(i.correctConcept)||'—'}</p>
+    <p class="muted" style="margin-bottom:3px">Reason for mistake</p><p style="font-size:0.85rem;margin-bottom:10px">${esc(i.reason)||'—'}</p>
+    <p class="muted">Revision date: ${i.revisionDate?fmtShort(i.revisionDate):'—'} ${i.resolved?'· resolved':''}</p>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      ${!i.resolved?`<button class="btn btn-success btn-sm" onclick="resolveError('${id}')">${icon('check',14)} Mark resolved</button>`:''}
+      <button class="btn btn-danger btn-sm" onclick="deleteError('${id}')">${icon('trash',14)} Delete</button>
+    </div>
+  `);
+}
+function resolveError(id){
+  const i = STATE.errorNotebook.find(x=>x.id===id); if(!i) return;
+  i.resolved = true; saveState(); closeModal(); showToast('Marked resolved'); renderErrorNotebook();
+}
+function deleteError(id){
+  STATE.errorNotebook = STATE.errorNotebook.filter(x=>x.id!==id);
+  saveState(); closeModal(); renderErrorNotebook();
+}
+
+/* ============================================================================
+   SCREEN: WEAK TOPICS — auto-populated (accuracy < 70% or wrong twice)
+   ============================================================================ */
+function renderWeakTopics(){
+  const el = document.getElementById('screen-weaktopics');
+  const open = STATE.weakTopics.filter(w=>!w.resolved).sort((a,b)=>b.dateAdded.localeCompare(a.dateAdded));
+  const resolved = STATE.weakTopics.filter(w=>w.resolved);
+  el.innerHTML = `
+    <div class="screen-header"><h2>Weak Topics</h2><p>Auto-added when MCQ/PYQ accuracy drops below 70%, or a question is missed twice</p></div>
+    <div class="grid-2">
+      <div class="stat-card"><div class="stat-val" style="color:var(--danger)">${open.length}</div><div class="stat-label">Active weak topics</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--success)">${resolved.length}</div><div class="stat-label">Improved</div></div>
+    </div>
+    <div class="section-title">Needs extra revision</div>
+    <div class="card">
+      ${open.length? open.map(w=>`
+        <div class="task-row">
+          <div class="chk" onclick="resolveWeakTopic('${w.id}');renderWeakTopics()">${icon('check',13)}</div>
+          <div class="task-main"><div class="task-title">${esc(w.subjectName)}: ${esc(w.topic)}</div>
+          <div class="task-sub">${esc(w.reason)} · flagged ${fmtShort(w.dateAdded)}</div></div>
+        </div>`).join('')
+      : `<div class="empty-state">${icon('target',30)}<p>No weak topics right now — keep logging MCQ scores and PYQs to let the app track this automatically.</p></div>`}
+    </div>
+    ${resolved.length?`
+    <div class="section-title">Improved topics</div>
+    <div class="card">
+      ${resolved.slice(0,10).map(w=>`<div class="list-item"><div class="list-item-body"><div class="list-item-title">${esc(w.subjectName)}: ${esc(w.topic)}</div></div></div>`).join('')}
+    </div>`:''}
+  `;
+}
+
+/* ============================================================================
+   SCREEN: MORE (secondary nav grid)
+   ============================================================================ */
+function renderMore(){
+  const el = document.getElementById('screen-more');
+  const items = [
+    ['anthropology','Anthropology','shield','#6A1B9A'],
+    ['currentaffairs','Current Affairs','news','#C62828'],
+    ['mocktests','Mock Tests','trophy','#F9A825'],
+    ['revision','Revision','repeat','#2E7D32'],
+    ['pyq','PYQ Tracker','book','#0D47A1'],
+    ['answerwriting','Answer Writing','pen','#1976D2'],
+    ['habits','Habit Tracker','check','#00838F'],
+    ['timer','Study Timer','timer','#4E342E'],
+    ['statistics','Statistics','chart','#37474F'],
+    ['flashcards','Flashcards & Notes','stack','#AD1457'],
+    ['errornotebook','Error Notebook','edit','#C62828'],
+    ['weaktopics','Weak Topics','target','#EF6C00'],
+    ['settings','Settings','settings','#5D4037']
+  ];
+  el.innerHTML = `
+    <div class="screen-header"><h2>More</h2><p>Everything else in your prep toolkit</p></div>
+    <div class="more-grid">
+      ${items.map(([screen,label,ic,color])=>`
+        <div class="more-item" onclick="navigate('${screen}')">
+          <div class="mi-icon" style="background:${color}1e;color:${color}">${icon(ic,20)}</div>
+          <span>${label}</span>
+        </div>`).join('')}
+    </div>
+  `;
+}
+
+/* ============================================================================
+   SCREEN: SETTINGS
+   ============================================================================ */
+const ACCENT_OPTIONS = {
+  accent1:{primary:'#0D47A1', accent:'#1976D2'},
+  accent2:{primary:'#2E7D32', accent:'#43A047'},
+  accent3:{primary:'#6A1B9A', accent:'#8E24AA'},
+  accent4:{primary:'#C62828', accent:'#E53935'},
+  accent5:{primary:'#EF6C00', accent:'#FB8C00'}
+};
+function renderSettings(){
+  const el = document.getElementById('screen-settings');
+  el.innerHTML = `
+    <div class="screen-header"><h2>Settings</h2></div>
+    <div class="card">
+      <div class="list-item"><div class="list-item-body"><div class="list-item-title">Dark mode</div></div>
+        <label class="switch"><input type="checkbox" id="darkModeSwitch" ${STATE.theme==='dark'?'checked':''} onchange="toggleDarkMode(this.checked)"><span class="sl"></span></label></div>
+      <div class="divider"></div>
+      <div class="list-item-title" style="margin-bottom:8px">Accent colour</div>
+      <div style="display:flex;gap:10px">
+        ${Object.entries(ACCENT_OPTIONS).map(([k,v])=>`<div class="color-dot ${STATE.accent===k?'active':''}" style="background:${v.primary}" onclick="setAccent('${k}')"></div>`).join('')}
+      </div>
+      <div class="divider"></div>
+      <div class="list-item-title" style="margin-bottom:8px">Font size</div>
+      <div class="tabbar" style="margin:0">
+        ${[['sm','Small'],['md','Medium'],['lg','Large']].map(([k,l])=>`<div class="tabchip ${STATE.fontSize===k?'active':''}" onclick="setFontSize('${k}')">${l}</div>`).join('')}
+      </div>
+    </div>
+
+    <div class="section-title">Data</div>
+    <div class="card">
+      <div class="list-item" onclick="exportData()"><div class="mi-icon" style="background:rgba(25,118,210,.12);color:var(--accent);width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center">${icon('download',16)}</div>
+        <div class="list-item-body"><div class="list-item-title">Export JSON</div><div class="list-item-sub">Backup all your data to a file</div></div><div class="chev">${icon('arrowRight',15)}</div></div>
+      <div class="list-item" onclick="document.getElementById('importFileInput').click()"><div class="mi-icon" style="background:rgba(46,125,50,.12);color:var(--success);width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center">${icon('upload',16)}</div>
+        <div class="list-item-body"><div class="list-item-title">Import JSON</div><div class="list-item-sub">Restore from a backup file</div></div><div class="chev">${icon('arrowRight',15)}</div></div>
+      <input type="file" id="importFileInput" accept="application/json" style="display:none" onchange="importData(event)">
+      <div class="list-item" onclick="confirmReset()"><div class="mi-icon" style="background:rgba(198,40,40,.12);color:var(--danger);width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center">${icon('trash',16)}</div>
+        <div class="list-item-body"><div class="list-item-title">Reset all data</div><div class="list-item-sub">Cannot be undone</div></div><div class="chev">${icon('arrowRight',15)}</div></div>
+    </div>
+
+    <div class="section-title">About</div>
+    <div class="card">
+      <p class="muted">Prelims Path · Plan window ${fmtShort(START_DATE_STR)} 2026 → ${fmtShort(EXAM_DATE_STR)} 2027 (${TOTAL_DAYS} days)</p>
+      <p class="muted" style="margin-top:6px">All data is stored locally on this device. No backend, no account required.</p>
+    </div>
+  `;
+}
+function toggleDarkMode(on){
+  STATE.theme = on?'dark':'light';
+  applyTheme(); saveState();
+}
+function setAccent(k){
+  STATE.accent = k; applyTheme(); saveState(); renderSettings();
+}
+function setFontSize(k){
+  STATE.fontSize = k; applyTheme(); saveState(); renderSettings();
+}
+function applyTheme(){
+  document.documentElement.setAttribute('data-theme', STATE.theme==='dark'?'dark':'light');
+  const a = ACCENT_OPTIONS[STATE.accent]||ACCENT_OPTIONS.accent1;
+  document.documentElement.style.setProperty('--primary', a.primary);
+  document.documentElement.style.setProperty('--accent', a.accent);
+  const scale = STATE.fontSize==='sm'?0.92:STATE.fontSize==='lg'?1.12:1;
+  document.documentElement.style.setProperty('--fs-scale', scale);
+  const icn = document.getElementById('themeIcon');
+  if(icn) icn.innerHTML = STATE.theme==='dark'
+    ? '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>'
+    : '<circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2 12h2M20 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>';
+}
+function exportData(){
+  const blob = new Blob([JSON.stringify(STATE,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'prelims-path-backup-'+todayISO()+'.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+  showToast('Backup exported');
+}
+function importData(e){
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const parsed = JSON.parse(reader.result);
+      STATE = Object.assign(defaultState(), parsed);
+      SCHEDULE = null;
+      saveState(); applyTheme(); showToast('Data restored'); navigate('home');
+    }catch(err){ showToast('Invalid backup file'); }
+  };
+  reader.readAsText(file);
+}
+function confirmReset(){
+  openModal(`
+    <div class="modal-head"><h3>Reset all data?</h3><button class="topbar-btn" onclick="closeModal()">${icon('close',18)}</button></div>
+    <p style="font-size:0.86rem">This permanently deletes all your progress, notes, current affairs, mock tests and settings. This cannot be undone.</p>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn btn-outline btn-block" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger btn-block" onclick="doReset()">Reset everything</button>
+    </div>
+  `);
+}
+function doReset(){
+  localStorage.removeItem(STORAGE_KEY);
+  STATE = defaultState();
+  SCHEDULE = null;
+  closeModal();
+  applyTheme();
+  navigate('home');
+  showToast('All data reset');
+}
+
+/* ============================================================================
+   GLOBAL SEARCH — across notes, current affairs, PYQ, flashcards, subject notes
+   ============================================================================ */
+document.getElementById('btnSearchToggle').addEventListener('click', ()=>{
+  const w = document.getElementById('searchWrap');
+  w.classList.toggle('open');
+  if(w.classList.contains('open')) document.getElementById('searchInput').focus();
+});
+document.getElementById('searchInput').addEventListener('input', (e)=>{
+  runSearch(e.target.value.trim());
+});
+function runSearch(q){
+  const box = document.getElementById('searchResults');
+  if(!q){ box.innerHTML=''; return; }
+  const ql = q.toLowerCase();
+  const hits = [];
+  STATE.currentAffairs.forEach(i=>{
+    if((i.title+' '+i.notes).toLowerCase().includes(ql)) hits.push({label:i.title, meta:'Current Affairs · '+fmtShort(i.date), action:`openViewCA('${i.id}')`});
+  });
+  STATE.pyq.forEach(p=>{
+    if((p.topic+' '+p.subject).toLowerCase().includes(ql)) hits.push({label:p.year+' · '+p.topic, meta:'PYQ · '+p.subject, action:`navigate('pyq')`});
+  });
+  STATE.flashcards.forEach(f=>{
+    if((f.front+' '+f.back).toLowerCase().includes(ql)) hits.push({label:f.front, meta:'Flashcard · '+f.subject, action:`navigate('flashcards')`});
+  });
+  SUBJECT_KEYS.forEach(k=>{
+    const sp = getSubjectProgress(k);
+    if((sp.notes||'').toLowerCase().includes(ql)) hits.push({label:SUBJECTS[k].name+' notes', meta:'Subject notes', action:`navigate('subjectDetail','${k}')`});
+    SUBJECTS[k].chapters.forEach(ch=>{
+      if(ch.toLowerCase().includes(ql)) hits.push({label:ch, meta:SUBJECTS[k].name, action:`navigate('subjectDetail','${k}')`});
+    });
+  });
+  STATE.answerWriting.forEach(a=>{
+    if((a.question||'').toLowerCase().includes(ql)) hits.push({label:a.question, meta:'Answer Writing · '+fmtShort(a.date), action:`navigate('answerwriting')`});
+  });
+  STATE.errorNotebook.forEach(e=>{
+    if((e.question+' '+e.wrongConcept+' '+e.correctConcept).toLowerCase().includes(ql)) hits.push({label:e.question, meta:'Error Notebook · '+e.subject, action:`openViewError('${e.id}')`});
+  });
+  STATE.weakTopics.forEach(w=>{
+    if((w.topic+' '+w.subjectName).toLowerCase().includes(ql)) hits.push({label:w.topic, meta:'Weak Topic · '+w.subjectName, action:`navigate('weaktopics')`});
+  });
+  if((STATE.globalNotes||'').toLowerCase().includes(ql)) hits.push({label:'Global Notes match', meta:'Notes', action:`openGlobalNotes()`});
+  if((STATE.formulaSheet||'').toLowerCase().includes(ql)) hits.push({label:'Formula Sheet match', meta:'Notes', action:`openFormulaSheet()`});
+
+  box.innerHTML = hits.length ? hits.slice(0,20).map(h=>`
+    <div class="search-hit" onclick="${h.action}"><b>${esc(h.label)}</b><div class="sh-meta">${esc(h.meta)}</div></div>
+  `).join('') : `<div class="search-hit"><span class="muted">No matches found</span></div>`;
+}
+
+/* ---------- Theme toggle button (topbar quick toggle) ---------- */
+document.getElementById('btnThemeToggle').addEventListener('click', ()=>{
+  toggleDarkMode(STATE.theme !== 'dark');
+});
+
+/* ============================================================================
+   INIT
+   ============================================================================ */
+function init(){
+  applyTheme();
+  buildSchedule();
+  updateStreak();
+  saveState();
+  navigate('home');
+  // Re-render active timer screen every second is handled by timer interval itself.
+  // Register minimal service worker for offline caching if supported.
+  if('serviceWorker' in navigator){
+    try{
+      const swCode = `
+        const CACHE='prelims-path-v1';
+        self.addEventListener('install', e => self.skipWaiting());
+        self.addEventListener('activate', e => self.clients.claim());
+        self.addEventListener('fetch', e => {
+          e.respondWith(
+            caches.open(CACHE).then(cache =>
+              cache.match(e.request).then(resp => resp || fetch(e.request).then(netResp => {
+                if(e.request.method==='GET') cache.put(e.request, netResp.clone());
+                return netResp;
+              }).catch(()=>resp))
+            )
+          );
+        });
+      `;
+      const blob = new Blob([swCode], {type:'application/javascript'});
+      navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+    }catch(e){ /* offline registration best-effort only */ }
+  }
+}
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
